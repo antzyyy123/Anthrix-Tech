@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact &middot; Anthrix</title>
+  <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand">Anthrix</a>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="work.html">Work</a>
+        <a href="contact.html" class="nav-btn active">Contact</a>
+      </nav>
+      <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="contact-section">
+      <div class="container">
+        <div class="contact-inner">
+          <div class="contact-info">
+            <h2>Get in touch</h2>
+            <p>Tell us about your project. We respond to every submission.</p>
+            <ul class="contact-details">
+              <li><strong>Email:</strong> hello@anthrix.example</li>
+              <li><strong>Location:</strong> Manila, Philippines</li>
+            </ul>
+          </div>
+
+          <form id="contactForm" class="contact-form" novalidate>
+            <h2>Send a message</h2>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="name">Name <span class="req">*</span></label>
+                <input type="text" id="name" name="name" placeholder="Your full name" required minlength="2">
+                <span class="error" id="nameError"></span>
+              </div>
+              <div class="field">
+                <label for="email">Email <span class="req">*</span></label>
+                <input type="email" id="email" name="email" placeholder="you@company.com" required>
+                <span class="error" id="emailError"></span>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label for="project">Project <span class="req">*</span></label>
+              <input type="text" id="project" name="project" placeholder="e.g. University capstone system" required>
+              <span class="error" id="projectError"></span>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="budget">Budget</label>
+                <select id="budget" name="budget">
+                  <option value="">Select budget range</option>
+                  <option value="under-5k">Under &pound;5,000</option>
+                  <option value="5k-15k">&pound;5,000 &ndash; &pound;15,000</option>
+                  <option value="15k-30k">&pound;15,000 &ndash; &pound;30,000</option>
+                  <option value="over-30k">Over &pound;30,000</option>
+                  <option value="not-sure">Not sure yet</option>
+                </select>
+                <span class="error" id="budgetError"></span>
+              </div>
+              <div class="field">
+                <label for="timeline">Time line</label>
+                <select id="timeline" name="timeline">
+                  <option value="">Select time line</option>
+                  <option value="asap">As soon as possible</option>
+                  <option value="1-month">Within 1 month</option>
+                  <option value="3-months">Within 3 months</option>
+                  <option value="6-months">Within 6 months</option>
+                  <option value="flexible">Flexible</option>
+                </select>
+                <span class="error" id="timelineError"></span>
+              </div>
+            </div>
+
+            <div class="field full">
+              <label for="building">What are you building? <span class="req">*</span></label>
+              <textarea id="building" name="building" rows="5" placeholder="Describe your project in detail..." required minlength="10"></textarea>
+              <span class="error" id="buildingError"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">Send message</button>
+            <div class="form-message" id="formMessage"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">Anthrix</div>
+      <p class="footer-copy">&copy; 2026 Anthrix. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../static/js/script.js"></script>
+</body>
+</html>
