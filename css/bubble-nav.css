@@ -2,101 +2,51 @@
    BUBBLE NAVIGATION — Phones Only
    ============================================================ */
 
-/* Hidden by default; shown only on phones via media query below */
 .bubble-nav {
   display: none;
   position: fixed;
-  z-index: 1100;
   inset: 0;
+  z-index: 1100;
   width: 100%;
   height: 100%;
-  padding: env(safe-area-inset-top) env(safe-area-inset-right)
-    env(safe-area-inset-bottom) env(safe-area-inset-left);
-  box-sizing: border-box;
   pointer-events: none;
 }
 
-.bubble-nav.bubble-nav--ready {
-  display: block;
-}
-
-/* ── Phone-specific top bar: only logo + name, sticky 64px ── */
-@media (max-width: 767px), ((max-height: 500px) and (pointer: coarse)) {
-  html {
-    --nav-height: 64px;
-  }
-
-  .site-nav {
-    height: 64px;
-    position: sticky;
-    top: 0;
-    z-index: 1050;
-  }
-
-  .nav-inner {
-    height: 64px;
-    padding: 0 var(--gutter);
-    gap: 0;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .nav-inner > .brand {
-    margin: 0 auto;
-  }
-
-  .nav-toggle { display: none !important; }
-  .nav-menu { display: none !important; }
-  .nav-menu.is-open { display: none !important; }
-  .theme-segmented { display: none !important; }
-  .nav-links { display: none !important; }
-  .btn-touch--desktop { display: none !important; }
-  .btn-touch--mobile { display: none !important; }
-}
-
-/* ── Bubbles ── */
 .bubble {
   position: absolute;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  will-change: transform;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
   pointer-events: auto;
   touch-action: none;
-  box-sizing: border-box;
+  will-change: transform;
 }
 
-/* Main bubble */
 .bubble-main {
+  top: 0;
+  left: 0;
   width: 56px;
   height: 56px;
   background: var(--btn);
   color: var(--on-btn);
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease;
 }
 
-.bubble-main:hover {
-  background: var(--accent);
-}
-
-.bubble-main:focus-visible {
+.bubble-main:focus-visible,
+.bubble-item:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 
-/* Main bubble icons: logo mark (closed) / X (open) */
 .bubble-main svg.logo-mark {
   width: 26px;
-  height: 26px;
-  fill: currentColor;
+  height: auto;
   display: block;
 }
-
-.bubble-main.is-open svg.logo-mark { display: none; }
 
 .bubble-main svg.x-mark {
   width: 20px;
@@ -107,12 +57,19 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   display: none;
-  block-size: auto;
+  transform: rotate(-90deg);
+  transition: transform 0.2s ease;
 }
 
-.bubble-main.is-open svg.x-mark { display: block; }
+.bubble-main.is-open svg.logo-mark {
+  display: none;
+}
 
-/* Small bubbles */
+.bubble-main.is-open svg.x-mark {
+  display: block;
+  transform: rotate(0);
+}
+
 .bubble-item {
   width: 46px;
   height: 46px;
@@ -121,44 +78,32 @@
   opacity: 0;
   transform: scale(0.2);
   pointer-events: none;
-  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-    opacity 0.45s ease;
+  transition-property: transform, opacity;
+  transition-duration: 450ms;
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .bubble-nav--open .bubble-item {
-  opacity: 1;
-  transform: scale(1);
   pointer-events: auto;
 }
 
 .bubble-item:hover,
-.bubble-item:focus-visible {
-  background: var(--accent);
-  color: var(--on-btn);
-}
-
-.bubble-item:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-/* Brand theme: solid dark surface for small bubbles */
-html[data-theme="brand"] .bubble-item {
-  background: rgba(59, 10, 158, 0.92);
-}
-
-html[data-theme="brand"] .bubble-item:hover,
-html[data-theme="brand"] .bubble-item:focus-visible {
-  background: var(--accent);
-}
-
-/* Active section bubble gets accent fill */
+.bubble-item:focus-visible,
 .bubble-item.is-active {
   background: var(--accent);
   color: var(--on-btn);
 }
 
-/* ── Icons ── */
+html[data-theme="brand"] .bubble-item {
+  background: rgba(59, 10, 158, 0.92);
+}
+
+html[data-theme="brand"] .bubble-item:hover,
+html[data-theme="brand"] .bubble-item:focus-visible,
+html[data-theme="brand"] .bubble-item.is-active {
+  background: var(--accent);
+}
+
 .bubble svg {
   width: 24px;
   height: 24px;
@@ -170,54 +115,95 @@ html[data-theme="brand"] .bubble-item:focus-visible {
   display: block;
 }
 
-/* Theme gradient dot (brand) */
-.theme-dot {
-  width: 14px;
-  height: 14px;
+.bubble .theme-dot {
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #FDBA8C 0%, #7144D4 45%, #3B0A9E 100%);
-  display: inline-block;
+  background: conic-gradient(
+    from 0deg,
+    #FDBA8C 0%,
+    #7144D4 45%,
+    #3B0A9E 100%
+  );
 }
 
-/* ── Tooltips (hover devices only) ── */
 @media (hover: hover) {
   .bubble-item::after {
     content: attr(aria-label);
     position: absolute;
     bottom: calc(100% + 8px);
     left: 50%;
-    transform: translateX(-50%);
+    z-index: 1101;
     padding: 4px 8px;
-    font-size: 0.75rem;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
+    border: 1px solid var(--border);
     border-radius: 4px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.75rem;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
+    transform: translateX(-50%);
     transition: opacity 0.2s ease;
-    z-index: 1101;
   }
 
   .bubble-item:hover::after,
-  .bubble-item:focus::after {
+  .bubble-item:focus-visible::after {
     opacity: 1;
   }
 }
 
-/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
+  .bubble-main svg.x-mark,
   .bubble-item {
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-
-  .bubble-nav--open .bubble-item {
-    transition-delay: 0ms !important;
-    transition-duration: 0.2s !important;
+    transition-duration: 160ms;
+    transition-timing-function: ease;
   }
 }
 
-/* ── Above phone size: bubble hidden ── */
-@media not (max-width: 767px) and not ((max-height: 500px) and (pointer: coarse)) {
-  .bubble-nav { display: none !important; }
+/* Phones: portrait phones, or short landscape on touch devices.
+   Must match isPhone() in bubble-nav.js */
+@media (max-width: 767px), (max-height: 500px) and (pointer: coarse) {
+  html {
+    --nav-height: 64px;
+    scroll-padding-top: 64px;
+  }
+
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+    height: 64px;
+  }
+
+  .nav-inner {
+    height: 64px;
+    padding: 0 var(--gutter);
+    gap: 0;
+    align-items: center;
+    justify-content: flex-start;  /* logo + brand on the left */
+  }
+
+  .nav-inner > .brand {
+    margin: 0;
+  }
+
+  .nav-toggle,
+  .nav-menu,
+  .theme-segmented,
+  .nav-links,
+  .btn-touch--desktop,
+  .btn-touch--mobile {
+    display: none !important;
+  }
+
+  .bubble-nav.bubble-nav--ready {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

@@ -135,6 +135,8 @@ a:hover {
 
 /* ============================================================
    4. TOP NAVIGATION BAR
+      768px and up  -> full top navigation (this section)
+      Phones        -> floating bubble navigation (bubble-nav.css)
    ============================================================ */
 
 .site-nav {
@@ -167,6 +169,7 @@ html[data-theme="light"] .site-nav {
   margin: 0;
   padding: 0 var(--gutter);
   gap: clamp(12px, 2vw, 28px);
+  justify-content: flex-start;
 }
 
 /* Brand: logo + wordmark */
@@ -354,7 +357,7 @@ html[data-theme="light"] .site-nav {
   font-size: 0.85rem;
 }
 
-/* Desktop Get in touch button */
+/* Get in touch button (top nav, tablet + desktop) */
 .btn-touch.btn-touch--desktop {
   display: inline-flex;
   align-items: center;
@@ -380,192 +383,21 @@ html[data-theme="light"] .site-nav {
   transform: translateY(-1px);
 }
 
-/* Bubble menu toggle (floating, placeable anywhere) */
-.nav-toggle {
-  display: none;
-  background: var(--accent);
-  color: var(--on-btn);
-  border: none;
-  border-radius: 50%;
-  width: 56px;
-  height: 56px;
-  cursor: pointer;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-  z-index: 100;
+/* Tablet: tighten spacing so the full top nav fits */
+@media (min-width: 768px) and (max-width: 1179px) {
+  .nav-links { gap: clamp(8px, 1.4vw, 16px); }
+  .nav-links li a { font-size: clamp(0.82rem, 1vw, 0.95rem); }
 }
 
-.nav-toggle:hover {
-  transform: scale(1.08);
-  background: var(--btn);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
-}
-
-.nav-toggle:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.bubble-dot {
-  width: 8px;
-  height: 8px;
-  background: currentColor;
-  border-radius: 50%;
-  display: block;
-}
-
-.bubble-dot + .bubble-dot {
-  margin-top: 6px;
-}
-
-/* Open state: morph dots into an X */
-.nav-toggle.is-open .bubble-dot:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-  transform-origin: center;
-}
-.nav-toggle.is-open .bubble-dot:nth-child(2) {
-  opacity: 0;
-}
-.nav-toggle.is-open .bubble-dot:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
-  transform-origin: center;
-}
-
-/* Floating positioning utilities — place the bubble anywhere */
-.bubble-fixed {
-  position: fixed;
-}
-.bubble-bottom-right {
-  bottom: 24px;
-  right: 24px;
-}
-.bubble-bottom-left {
-  bottom: 24px;
-  left: 24px;
-}
-.bubble-top-right {
-  top: 24px;
-  right: 24px;
-}
-.bubble-top-left {
-  top: 24px;
-  left: 24px;
-}
-
-/* Bubble inside nav bar (inline) */
-.bubble-inline {
-  position: static;
-  margin-left: auto;
-}
-
-/* ============================================================
-   MOBILE & TABLET (below 1180px)
-   ============================================================ */
-
-@media (max-width: 1179px) {
-  .nav-toggle {
-    display: inline-flex;
-    margin-left: auto;
-    flex-shrink: 0;
-  }
-
-  .btn-touch--desktop {
-    display: none;
-  }
-
-  .nav-menu {
-    display: none;
-  }
-
-  .nav-menu.is-open {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    padding: 16px var(--gutter) 24px;
-    gap: 14px;
-    max-height: calc(100dvh - var(--nav-height, 76px));
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    z-index: 100;
-  }
-
-  html[data-theme="brand"] .nav-menu.is-open {
-    background: rgba(59, 10, 158, 0.96);
-  }
-
-  .nav-links {
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .nav-links li a {
-    padding: 14px 0;
-    font-size: 1.05rem;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-  }
-
-  .btn-touch--mobile {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 44px;
-    padding: 0.7rem 1.25rem;
-    font-size: 0.95rem;
-    background: var(--btn);
-    color: var(--on-btn);
-    border-radius: 999px;
-    text-decoration: none;
-  }
-
-  .btn-touch--mobile:hover {
-    background: var(--accent);
-    color: var(--on-btn);
-    text-decoration: none;
-  }
-
-  .theme-segmented {
-    width: 100%;
-    justify-content: center;
-    margin-top: 4px;
-  }
-
-  .theme-option {
-    min-width: 44px;
-    min-height: 44px;
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-  }
+/* Narrow tablet: drop the CTA button so nothing overflows */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .btn-touch--desktop { display: none; }
 }
 
 /* Under 380px: hide only "Tech", never the logo */
 @media (max-width: 380px) {
   .brand-sub {
     display: none;
-  }
-}
-
-/* Small desktops: tighten nav spacing so links never wrap */
-@media (min-width: 760px) and (max-width: 1179px) {
-  .nav-links {
-    gap: clamp(8px, 1.4vw, 16px);
-  }
-  .nav-links li a {
-    font-size: clamp(0.82rem, 1vw, 0.95rem);
   }
 }
 
@@ -1003,7 +835,7 @@ html[data-theme="light"] .site-nav {
    8. TOUCH TARGETS (minimum 44px on all devices)
    ============================================================ */
 .btn, .hero-btn-primary, .hero-btn-secondary, .btn-touch,
-.nav-links li a, .nav-link-book, .theme-option, .nav-toggle {
+.nav-links li a, .nav-link-book, .theme-option {
   min-height: 44px;
   min-width: 44px;
 }
@@ -1113,4 +945,102 @@ html[data-theme="light"] .site-nav {
   .btn-touch:focus-visible span {
     transform: none;
   }
+}
+
+/* ============================================================
+   11. NAV FIXES (kept last so they win over older rules)
+   ============================================================ */
+
+/* The old hamburger is never used: phones get the floating bubble.
+   Hidden everywhere so it can't sit on top of the logo. */
+.site-nav .nav-toggle {
+  display: none !important;
+}
+
+/* Links: one shared centre line, no stretched min-width gaps */
+.site-nav .nav-links {
+  align-items: center;
+}
+.site-nav .nav-links li {
+  display: flex;
+  align-items: center;
+}
+.site-nav .nav-links li a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 44px;
+}
+
+/* Theme switcher: buttons must fit inside the 36px pill */
+.site-nav .theme-segmented {
+  align-items: center;
+}
+.site-nav .theme-option {
+  width: 28px;
+  height: 28px;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* "Get in touch" is a pill button whatever class the HTML gives it,
+   pushed to the right, next to the theme switch */
+.site-nav .nav-menu .btn-touch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 0.7rem 1.25rem;
+  min-height: 44px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: var(--btn);
+  color: var(--on-btn);
+  border-radius: 999px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.site-nav .nav-menu .btn-touch:hover,
+.site-nav .nav-menu .btn-touch:focus-visible {
+  background: var(--accent);
+  color: var(--on-btn);
+}
+
+/* Narrow tablet: drop the CTA so nothing overflows */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .site-nav .nav-menu .btn-touch {
+    display: none;
+  }
+}
+
+/* ============================================================
+   12. BRAND: logo left, "Anthrix" + "Tech" flush (AnthrixTech)
+   ============================================================ */
+.site-nav .brand {
+  gap: 0;                       /* no gap between any brand children */
+  margin-left: 0;
+  justify-content: flex-start;
+}
+.site-nav .brand .logo {
+  margin-right: 10px;           /* the only space: logo -> wordmark */
+}
+.site-nav .brand .brand-name {
+  display: inline-flex !important;
+  gap: 0 !important;
+  letter-spacing: 0;
+  word-spacing: 0;
+}
+.site-nav .brand .brand-main,
+.site-nav .brand .brand-sub {
+  display: inline-block;
+  margin: 0 !important;
+  padding: 0 !important;
+  letter-spacing: 0;
+  word-spacing: 0;
+}
+.site-nav .brand .brand-main::after,
+.site-nav .brand .brand-sub::before {
+  content: none !important;
 }
