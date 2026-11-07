@@ -1,0 +1,15 @@
+# Scratch / temp files
+temp_header.txt
+temp_logo_svg.txt
+temp_path_only.txt
+
+# Node / JS tooling
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
