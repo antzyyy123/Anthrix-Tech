@@ -322,4 +322,6 @@
       if (el) observer.observe(el);
     });
   }
+  window.__applyTheme = applyTheme;
+  window.__cycleTheme = cycleTheme;
 })();

@@ -380,47 +380,87 @@ html[data-theme="light"] .site-nav {
   transform: translateY(-1px);
 }
 
-/* Hamburger toggle */
+/* Bubble menu toggle (floating, placeable anywhere) */
 .nav-toggle {
   display: none;
-  background: none;
+  background: var(--accent);
+  color: var(--on-btn);
   border: none;
-  color: var(--text);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
   cursor: pointer;
   padding: 0;
-  width: 44px;
-  height: 44px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  z-index: 100;
 }
 
-.nav-toggle span {
+.nav-toggle:hover {
+  transform: scale(1.08);
+  background: var(--btn);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.bubble-dot {
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+  border-radius: 50%;
   display: block;
-  width: 22px;
-  height: 2px;
-  background: var(--text);
-  border-radius: 2px;
-  transition: all 0.3s ease;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
-.nav-toggle span:nth-child(1) { top: 20%; }
-.nav-toggle span:nth-child(2) { top: 49%; transform: translate(-50%, -50%); }
-.nav-toggle span:nth-child(3) { bottom: 20%; }
-
-.nav-toggle.is-open span:nth-child(1) {
-  top: 49%;
-  transform: translate(-50%, -50%) rotate(45deg);
+.bubble-dot + .bubble-dot {
+  margin-top: 6px;
 }
-.nav-toggle.is-open span:nth-child(2) {
+
+/* Open state: morph dots into an X */
+.nav-toggle.is-open .bubble-dot:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+  transform-origin: center;
+}
+.nav-toggle.is-open .bubble-dot:nth-child(2) {
   opacity: 0;
 }
-.nav-toggle.is-open span:nth-child(3) {
-  bottom: 49%;
-  transform: translate(-50%, 50%) rotate(-45deg);
+.nav-toggle.is-open .bubble-dot:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+  transform-origin: center;
+}
+
+/* Floating positioning utilities — place the bubble anywhere */
+.bubble-fixed {
+  position: fixed;
+}
+.bubble-bottom-right {
+  bottom: 24px;
+  right: 24px;
+}
+.bubble-bottom-left {
+  bottom: 24px;
+  left: 24px;
+}
+.bubble-top-right {
+  top: 24px;
+  right: 24px;
+}
+.bubble-top-left {
+  top: 24px;
+  left: 24px;
+}
+
+/* Bubble inside nav bar (inline) */
+.bubble-inline {
+  position: static;
+  margin-left: auto;
 }
 
 /* ============================================================
@@ -960,7 +1000,107 @@ html[data-theme="light"] .site-nav {
 }
 
 /* ============================================================
-   8. MOTION & ACCESSIBILITY
+   8. TOUCH TARGETS (minimum 44px on all devices)
+   ============================================================ */
+.btn, .hero-btn-primary, .hero-btn-secondary, .btn-touch,
+.nav-links li a, .nav-link-book, .theme-option, .nav-toggle {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ============================================================
+   9. RESPONSIVE OVERRIDES — every device size
+   ============================================================ */
+
+/* Very small phones (<= 480px) */
+@media (max-width: 480px) {
+  html {
+    --nav-height: 64px;
+  }
+  .site-nav {
+    height: var(--nav-height, 64px);
+  }
+  .container {
+    width: min(100% - 2 * var(--gutter), 100%);
+  }
+  .features, .services-section, .work-section, .contact-section {
+    padding: clamp(1.5rem, 5vw, 3rem) 0;
+  }
+  .feature-grid, .service-grid, .work-grid, .contact-inner {
+    grid-template-columns: 1fr;
+  }
+  .hero {
+    padding: clamp(2rem, var(--nav-height) + 4vw, 3rem) 0 clamp(2rem, 5vw, 3rem);
+  }
+  .hero-headline {
+    font-size: clamp(1.75rem, 10vw, 3rem);
+    line-height: 1.15;
+  }
+  .hero-description {
+    font-size: clamp(0.95rem, 4vw, 1rem);
+    max-width: 100%;
+  }
+  .hero-visual {
+    height: clamp(200px, 35vh, 280px);
+  }
+  .hero-canvas-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  .footer-copy {
+    text-align: center;
+  }
+}
+
+/* Tiny phones (<= 380px) */
+@media (max-width: 380px) {
+  .brand-sub { display: none; }
+  .nav-links li a { font-size: 1rem; padding: 12px 0; }
+  .hero-headline { font-size: clamp(1.5rem, 11vw, 2.5rem); }
+  .hero-buttons { gap: 0.75rem; }
+}
+
+/* Landscape mobile — prevent overflow & keep content readable */
+@media (orientation: landscape) and (max-height: 500px) {
+  .hero {
+    min-height: auto;
+    padding-top: clamp(1rem, var(--nav-height) + 2vw, 2rem);
+    padding-bottom: clamp(1rem, 4vw, 2rem);
+  }
+  .hero-inner { gap: 1.5rem; }
+  .hero-visual { height: clamp(180px, 45vh, 260px); }
+  .hero-headline { font-size: clamp(1.75rem, 6vw, 2.75rem); }
+  section { padding-top: clamp(1.5rem, 4vw, 3rem); padding-bottom: clamp(1.5rem, 4vw, 3rem); }
+}
+
+/* Tablet portrait — comfortable spacing */
+@media (min-width: 481px) and (max-width: 1024px) {
+  .features, .services-section, .work-section, .contact-section {
+    padding: clamp(2rem, 5vw, 3.5rem) 0;
+  }
+  .hero { padding-top: clamp(3rem, var(--nav-height) + 5vw, 5rem); }
+}
+
+/* Wide screens — section padding grows */
+@media (min-width: 1280px) {
+  .features, .services-section, .work-section, .contact-section {
+    padding-top: clamp(3rem, 6vw, 7rem);
+    padding-bottom: clamp(3rem, 6vw, 7rem);
+  }
+}
+
+/* Large screens — hero headline scales */
+@media (min-width: 1920px) {
+  .hero h1 { font-size: clamp(5.2rem, 5vw, 6rem); }
+}
+
+/* ============================================================
+   10. MOTION & ACCESSIBILITY
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   .btn-touch,

@@ -24,8 +24,10 @@
       }
     })();
   </script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjlE5O8YJ+8z8zYJp9BZK7B2qG8W7S5hF7Z5K6B8C9D9E9F9A9B9C9D9E9F9A9B9C9D9E9F9A9B9C9" crossorigin="anonymous">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/bubble-nav.css">
   <script type="importmap">
     {
       "imports": {
@@ -115,6 +117,19 @@
   <div data-component="footer"></div>
   <script src="js/components.js"></script>
   <script src="js/script.js"></script>
+  <script src="js/bubble-nav.js"></script>
   <script type="module" src="js/hero.js"></script>
+
+  <div class="bubble-nav" id="bubbleNav" role="navigation" aria-label="Quick navigation">
+    <button class="bubble bubble-main" id="bubbleMain" aria-label="Open menu" aria-expanded="false" aria-controls="bubbleItems"></button>
+    <div id="bubbleItems" aria-hidden="true">
+      <a class="bubble bubble-item" href="#home" aria-label="Home" data-section="home" tabindex="-1"></a>
+      <a class="bubble bubble-item" href="#solution" aria-label="Solution" data-section="solution" tabindex="-1"></a>
+      <a class="bubble bubble-item" href="#work" aria-label="Work" data-section="work" tabindex="-1"></a>
+      <a class="bubble bubble-item" href="#contact" aria-label="Contact" data-section="contact" tabindex="-1"></a>
+      <a class="bubble bubble-item" href="#book-a-call" aria-label="Book a call" data-section="book-a-call" tabindex="-1"></a>
+      <button class="bubble bubble-item" id="bubbleTheme" aria-label="Switch theme" tabindex="-1"></button>
+    </div>
+  </div>
 </body>
 </html>
