@@ -1,33 +1,50 @@
-/* Anthrix &mdash; Static site styles */
+/* Anthrix Tech - Static site styles */
 
-/* Reset & base */
+/* ============================================================
+   1. RESET & BASE
+   ============================================================ */
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   scroll-behavior: smooth;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  scroll-padding-top: var(--nav-height);
+  --nav-height: 76px;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    transition: none;
+    scroll-behavior: auto;
   }
 }
 
-/* Theme colors */
-html[data-theme="light"] {
-  --bg: #F2F2F0;
-  --surface: #FFFFFF;
-  --text: #010109;
-  --muted: #52525F;
-  --accent: #2B36D9;
-  --btn: #2B36D9;
-  --on-btn: #FFFFFF;
-  --border: rgba(1,1,9,0.12);
+/* ============================================================
+   2. THEME COLORS (3 themes: brand, dark, light)
+      Edit colors here to rebrand. Default = brand.
+      --tech-color controls the color of the word "Tech" in the nav.
+   ============================================================ */
+
+/* Brand theme - DEFAULT */
+html[data-theme="brand"] {
+  --bg: linear-gradient(135deg, #FDBA8C 0%, #7144D4 45%, #3B0A9E 100%);
+  --surface: rgba(1, 1, 9, 0.35);
+  --text: #FFFFFF;
+  --muted: rgba(255, 255, 255, 0.78);
+  --accent: #FFFFFF;
+  --btn: #FFFFFF;
+  --on-btn: #3B0A9E;
+  --border: rgba(255, 255, 255, 0.22);
+  /* Logo gradient colors per theme */
+  --logo-a: #FFFFFF;
+  --logo-b: #E6DCFF;
+  /* "Tech" wordmark color */
+  --tech-color: #E6DCFF;
 }
 
+/* Black theme */
 html[data-theme="dark"] {
   --bg: #010109;
   --surface: #0E0E1F;
@@ -36,16 +53,49 @@ html[data-theme="dark"] {
   --accent: #8B93FF;
   --btn: #2B36D9;
   --on-btn: #FFFFFF;
-  --border: rgba(242,242,240,0.14);
+  --border: rgba(242, 242, 240, 0.14);
+  /* Logo gradient colors per theme */
+  --logo-a: #8B93FF;
+  --logo-b: #C9B8FF;
+  /* "Tech" wordmark color */
+  --tech-color: #C9B8FF;
 }
 
+/* White theme */
+html[data-theme="light"] {
+  --bg: #F2F2F0;
+  --surface: #FFFFFF;
+  --text: #010109;
+  --muted: #52525F;
+  --accent: #2B36D9;
+  --btn: #2B36D9;
+  --on-btn: #FFFFFF;
+  --border: rgba(1, 1, 9, 0.12);
+  /* Logo gradient colors per theme */
+  --logo-a: #2B36D9;
+  --logo-b: #6F86E8;
+  /* "Tech" wordmark color */
+  --tech-color: #6F86E8;
+}
+
+/* ============================================================
+   3. BODY & GLOBAL
+   ============================================================ */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
   color: var(--text);
   line-height: 1.6;
   background: var(--bg);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  background-attachment: fixed;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Soft dark overlay behind text areas on Brand theme so white text stays readable */
+html[data-theme="brand"] .text-overlay {
+  background: rgba(1, 1, 9, 0.25);
+  border-radius: 8px;
 }
 
 a {
@@ -61,89 +111,447 @@ a:hover {
   padding: 0 1.5rem;
 }
 
-/* Header */
-.site-header {
+/* Focus styles for keyboard accessibility */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   4. TOP NAVIGATION BAR
+   ============================================================ */
+
+.site-nav {
   position: sticky;
   top: 0;
-  background: var(--surface);
+  z-index: 1000;
+  height: var(--nav-height, 76px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  z-index: 50;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
-.header-inner {
+
+html[data-theme="brand"] .site-nav {
+  background: rgba(59, 10, 158, 0.55);
+}
+html[data-theme="dark"] .site-nav {
+  background: rgba(1, 1, 9, 0.72);
+}
+html[data-theme="light"] .site-nav {
+  background: rgba(242, 242, 240, 0.82);
+}
+
+.nav-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.5rem;
+  flex-wrap: nowrap;
+  height: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 3vw, 32px);
+  gap: 28px;
 }
+
+/* Brand: logo + wordmark */
 .brand {
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--text);
-}
-.nav {
   display: flex;
-  gap: 1rem;
   align-items: center;
-}
-.nav a {
-  color: var(--text);
-  font-weight: 500;
-  font-size: 0.95rem;
-}
-.nav a:hover, .nav a.active {
-  color: var(--accent);
+  gap: 10px; /* space between the logo and the wordmark only */
+  flex-shrink: 0;
   text-decoration: none;
 }
-.nav-btn {
-  background: var(--btn);
-  color: var(--on-btn) !important;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 600;
+
+.logo {
+  height: 36px;
+  width: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* Wordmark: "Anthrix" + "Tech" sit flush together (AnthrixTech) */
+.brand-name {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  column-gap: 0;
+  white-space: nowrap;
+  word-spacing: 0;
+  letter-spacing: 0;
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+}
+
+.brand-main {
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.brand-sub {
+  margin: 0;
+  padding: 0;
+  font-weight: 500;
+  color: var(--tech-color);
+  line-height: 1;
+}
+
+/* Nav menu */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 22px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links li a {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-links li a:hover,
+.nav-links li a:focus-visible {
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.nav-links li a::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease, left 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-links li a:hover::after,
+.nav-links li a:focus-visible::after {
+  width: 100%;
+}
+
+.nav-links li a.active {
+  color: var(--accent);
+}
+
+.nav-links li a.active::after {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-links li a,
+  .nav-links li a::after {
+    transition: none !important;
+  }
+  .nav-links li a:hover,
+  .nav-links li a:focus-visible {
+    transform: none;
+  }
+}
+
+.nav-link-book {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.nav-link-book:hover {
+  color: var(--text);
+}
+
+/* Theme switcher - reused markup, compact */
+.theme-segmented {
+  display: flex;
+  gap: 0.25rem;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.2rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.theme-option {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  transition: all 0.2s ease;
   font-size: 0.9rem;
 }
-.nav-btn:hover {
-  background: var(--accent);
-  text-decoration: none;
+
+.theme-option:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
 }
+
+.theme-option[aria-checked="true"] {
+  background: var(--btn);
+  color: var(--on-btn);
+  box-shadow: 0 0 12px rgba(113, 68, 212, 0.4);
+}
+
+/* Icon-only theme buttons - gradient dot, moon, sun */
+.theme-icon-brand {
+  background: conic-gradient(
+    from 0deg,
+    #FDBA8C 0%,
+    #7144D4 45%,
+    #3B0A9E 100%
+  );
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.theme-icon-moon {
+  font-size: 0.85rem;
+}
+.theme-icon-sun {
+  font-size: 0.85rem;
+}
+
+/* Desktop Get in touch button */
+.btn-touch.btn-touch--desktop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 0.7rem 1.25rem;
+  font-size: 0.95rem;
+  background: var(--btn);
+  color: var(--on-btn);
+  border-radius: 999px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-touch.btn-touch--desktop:hover {
+  background: var(--accent);
+  color: var(--on-btn);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* Hamburger toggle */
 .nav-toggle {
   display: none;
   background: none;
   border: none;
-  font-size: 1.5rem;
   color: var(--text);
   cursor: pointer;
-}
-
-.theme-toggle {
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.5rem;
-  width: 36px;
-  height: 36px;
-  display: flex;
+  padding: 0;
+  width: 44px;
+  height: 44px;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: var(--text);
+  position: relative;
 }
-.theme-toggle:hover {
+
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.nav-toggle span:nth-child(1) { top: 20%; }
+.nav-toggle span:nth-child(2) { top: 49%; transform: translate(-50%, -50%); }
+.nav-toggle span:nth-child(3) { bottom: 20%; }
+
+.nav-toggle.is-open span:nth-child(1) {
+  top: 49%;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.nav-toggle.is-open span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle.is-open span:nth-child(3) {
+  bottom: 49%;
+  transform: translate(-50%, 50%) rotate(-45deg);
+}
+
+/* ============================================================
+   MOBILE & TABLET (below 1180px)
+   ============================================================ */
+
+@media (max-width: 1179px) {
+  .nav-toggle {
+    display: inline-flex;
+    margin-left: auto;
+  }
+
+  .btn-touch--desktop {
+    display: none;
+  }
+
+  .nav-menu {
+    display: none;
+  }
+
+  .nav-menu.is-open {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding: 16px clamp(16px, 3vw, 32px) 24px;
+    gap: 14px;
+    max-height: calc(100vh - var(--nav-height, 76px));
+    overflow-y: auto;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+
+  html[data-theme="brand"] .nav-menu.is-open {
+    background: rgba(59, 10, 158, 0.96);
+  }
+
+  .nav-links {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-links li a {
+    padding: 12px 0;
+    font-size: 1.05rem;
+  }
+
+  .btn-touch--mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0.7rem 1.25rem;
+    font-size: 0.95rem;
+    background: var(--btn);
+    color: var(--on-btn);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+
+  .btn-touch--mobile:hover {
+    background: var(--accent);
+    color: var(--on-btn);
+    text-decoration: none;
+  }
+
+  .theme-option {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+}
+
+/* Under 380px: hide only "Tech", never the logo */
+@media (max-width: 380px) {
+  .brand-sub {
+    display: none;
+  }
+}
+
+/* ============================================================
+   5. FOOTER (always dark, logo always glowing)
+   ============================================================ */
+.site-footer {
+  margin-top: auto;
+  padding: 3rem 0;
+  border-top: 1px solid var(--border);
   background: var(--surface);
 }
-.theme-toggle .icon-sun,
-.theme-toggle .icon-moon {
-  display: none;
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  max-width: 1000px;
+  margin: 0 auto;
 }
-html[data-theme="light"] .theme-toggle .icon-sun,
-html[data-theme="dark"] .theme-toggle .icon-moon {
-  display: block;
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
+
+/* Footer logo - always glowing, using dark-theme colors */
+.footer-logo .logo {
+  filter: drop-shadow(0 0 6px #8B93FF)
+    drop-shadow(0 0 18px rgba(113, 68, 212, 0.6));
+  animation: logoPulse 3s ease-in-out infinite;
+}
+
+/* Keyframes for the footer logo glow (was referenced but not defined) */
+@keyframes logoPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px #8B93FF)
+      drop-shadow(0 0 18px rgba(113, 68, 212, 0.6));
+  }
+  50% {
+    filter: drop-shadow(0 0 10px #8B93FF)
+      drop-shadow(0 0 26px rgba(113, 68, 212, 0.85));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-logo .logo {
+    animation: none;
+  }
+}
+
+.footer-copy {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ============================================================
+   6. EXISTING SECTION STYLES (updated to use theme variables)
+   ============================================================ */
 
 /* Hero */
 .hero {
-  padding: 4rem 0 3rem;
+  padding: calc(var(--nav-height) + 2rem) 0 3rem;
   text-align: center;
 }
 .hero h1 {
@@ -287,7 +695,7 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
 .field textarea:focus {
   outline: none;
   border-color: var(--accent);
-  ring: 2px;
+  box-shadow: 0 0 0 2px var(--accent);
 }
 .field textarea {
   min-height: 120px;
@@ -325,83 +733,145 @@ html[data-theme="dark"] .theme-toggle .icon-moon {
   display: block;
 }
 
-/* Logo in nav */
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 0;
+/* Services */
+.services-section {
+  padding: 3rem 0;
 }
-.nav-logo img {
-  display: none;
-  height: 32px;
-  width: auto;
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
 }
-html[data-theme="light"] .nav-logo .logo-light {
-  display: block;
-}
-html[data-theme="dark"] .nav-logo .logo-dark {
-  display: block;
-}
-
-/* Footer always uses dark logo */
-.footer-logo {
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-.footer-logo img {
-  display: block;
-  height: 32px;
-  width: auto;
-}
-
-/* Footer */
-.site-footer {
-  margin-top: auto;
-  padding: 2rem 0;
-  border-top: 1px solid var(--border);
+.service-card {
   background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
 }
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 1.5rem;
-}
-.footer-brand {
-  font-weight: 800;
+.service-card h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
   color: var(--text);
 }
-.footer-copy {
+.service-card p {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.service-list {
+  list-style: none;
+  padding: 0;
   margin: 0;
-  font-size: 0.85rem;
+}
+.service-list li {
+  margin: 0 0 0.35rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.cta {
+  margin-top: 2rem;
+  text-align: center;
+}
+.cta p {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* Work */
+.work-section {
+  padding: 3rem 0;
+}
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+.work-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+.work-thumb {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+.work-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+.work-card p {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
   color: var(--muted);
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .nav {
-    display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem;
-    gap: 0.75rem;
+.brand .brand-name {
+  display: inline-flex !important;
+  gap: 0 !important;
+  column-gap: 0 !important;
+  word-spacing: 0 !important;
+}
+.brand .brand-name > span {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.brand .brand-sub {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Brand: no underline on hover */
+.brand,
+.brand:hover,
+.brand:focus-visible,
+.brand:hover .brand-name,
+.brand:hover .brand-main,
+.brand:hover .brand-sub {
+  text-decoration: none !important;
+}
+
+/* Get in touch: hover animation */
+.btn-touch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none !important;
+  transition: transform 0.25s ease, color 0.25s ease, filter 0.25s ease;
+}
+
+.btn-touch span {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.btn-touch:hover,
+.btn-touch:focus-visible {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 6px 14px rgba(113, 68, 212, 0.45));
+}
+
+.btn-touch:hover span,
+.btn-touch:focus-visible span {
+  transform: translateX(6px);
+}
+
+.btn-touch:active {
+  transform: translateY(0);
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-touch,
+  .btn-touch span {
+    transition: none;
   }
-  .nav.open {
-    display: flex;
-  }
-  .nav-toggle {
-    display: block;
-  }
-  .contact-inner {
-    grid-template-columns: 1fr;
-  }
-  .form-row {
-    grid-template-columns: 1fr;
+  .btn-touch:hover,
+  .btn-touch:focus-visible,
+  .btn-touch:hover span,
+  .btn-touch:focus-visible span {
+    transform: none;
   }
 }

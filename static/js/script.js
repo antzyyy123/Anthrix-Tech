@@ -1,55 +1,117 @@
-// Anthrix &mdash; Static site scripts
+// Anthrix Tech &mdash; Static site scripts
 
 (function () {
   "use strict";
 
-  // Theme toggle
-  var html = document.documentElement;
-  var themeToggle = document.getElementById("themeToggle");
+  // ============================================================
+  // THEME SYSTEM &mdash; 3 themes: brand (default), dark, light
+  // ============================================================
 
-  function setTheme(theme) {
+  var html = document.documentElement;
+  var themes = ["brand", "dark", "light"]; // order for cycling
+
+  // Theme icons for the segmented control (desktop)
+  var themeIcons = {
+    brand: '<span class="theme-icon-brand" aria-hidden="true"></span>',
+    dark: '<span class="theme-icon-moon" aria-hidden="true">&#9789;</span>',
+    light: '<span class="theme-icon-sun" aria-hidden="true">&#9728;</span>',
+  };
+
+  // Get the initial theme: localStorage > default brand
+  function getInitialTheme() {
+    try {
+      var saved = localStorage.getItem("theme");
+      if (saved && themes.indexOf(saved) !== -1) {
+        return saved;
+      }
+    } catch (e) {
+      // localStorage unavailable; ignore
+    }
+    return "brand"; // default theme
+  }
+
+  // Apply a theme to the document and UI controls
+  function applyTheme(theme) {
     html.setAttribute("data-theme", theme);
+
+    // Update desktop segmented control
+    document.querySelectorAll(".theme-option").forEach(function (btn) {
+      btn.setAttribute("aria-checked", btn.dataset.theme === theme ? "true" : "false");
+    });
+
+    // Update mobile cycling button text/icon
+    var mobileBtn = document.getElementById("themeCycleMobile");
+    if (mobileBtn) {
+      mobileBtn.dataset.theme = theme;
+      mobileBtn.innerHTML = themeIcons[theme];
+    }
+
     try {
       localStorage.setItem("theme", theme);
     } catch (e) {
       // localStorage unavailable; ignore
     }
-    updateToggleIcons(theme);
   }
 
-  function updateToggleIcons(theme) {
-    if (!themeToggle) return;
-    var sun = themeToggle.querySelector(".icon-sun");
-    var moon = themeToggle.querySelector(".icon-moon");
-    if (theme === "dark") {
-      if (sun) sun.style.display = "none";
-      if (moon) moon.style.display = "block";
+  // Cycle to next theme (brand -> dark -> light -> brand)
+  function cycleTheme() {
+    var current = html.getAttribute("data-theme") || "brand";
+    var idx = themes.indexOf(current);
+    var next = themes[(idx + 1) % themes.length];
+    applyTheme(next);
+  }
+
+  // Initialize theme from inline script (already applied) or default
+  function initTheme() {
+    var current = html.getAttribute("data-theme") || getInitialTheme();
+    if (!html.getAttribute("data-theme")) {
+      applyTheme(current);
     } else {
-      if (sun) sun.style.display = "block";
-      if (moon) moon.style.display = "none";
+      // Inline script already set data-theme; just sync UI
+      document.querySelectorAll(".theme-option").forEach(function (btn) {
+        btn.setAttribute("aria-checked", btn.dataset.theme === current ? "true" : "false");
+      });
+      var mobileBtn = document.getElementById("themeCycleMobile");
+      if (mobileBtn) {
+        mobileBtn.dataset.theme = current;
+        mobileBtn.innerHTML = themeIcons[current];
+      }
     }
   }
 
-  if (themeToggle) {
-    themeToggle.addEventListener("click", function () {
-      var current = html.getAttribute("data-theme");
-      var next = current === "dark" ? "light" : "dark";
-      setTheme(next);
+  function bindThemeOptions() {
+    document.querySelectorAll(".theme-option").forEach(function (btn) {
+      if (btn.dataset.themeBound) return;
+      btn.dataset.themeBound = "1";
+      btn.addEventListener("click", function () {
+        applyTheme(btn.dataset.theme);
+      });
     });
   }
 
-  // Mobile nav toggle
-  var toggle = document.querySelector(".nav-toggle");
-  var nav = document.querySelector(".nav");
+  // ============================================================
+  // CONTACT FORM (unchanged from previous version)
+  // ============================================================
 
-  if (toggle && nav) {
-    toggle.addEventListener("click", function () {
-      var open = nav.classList.toggle("open");
-      toggle.setAttribute("aria-expanded", open === true);
-    });
+  function initChrome() {
+    bindThemeOptions();
+    initTheme();
+    initNav();
+    initActiveObserver();
   }
 
-  // Contact form
+  var chromeReady = false;
+  function onChromeReady() {
+    if (chromeReady) return;
+    chromeReady = true;
+    initChrome();
+  }
+  if (document.querySelector('[data-component="top-nav"]')) {
+    document.addEventListener("components:ready", onChromeReady);
+  } else {
+    onChromeReady();
+  }
+
   var form = document.getElementById("contactForm");
   var message = document.getElementById("formMessage");
   var submitBtn = document.getElementById("submitBtn");
@@ -107,38 +169,32 @@
     clearErrors();
     var ok = true;
 
-    // Name (required, min 2)
     if (!fields.name || fields.name.value.trim().length < 2) {
       showError("name", "Please enter your name (at least 2 characters).");
       ok = false;
     }
 
-    // Email (required, valid format)
     var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!fields.email || !emailRe.test(fields.email.value.trim())) {
       showError("email", "Please enter a valid email address.");
       ok = false;
     }
 
-    // Project (required)
     if (!fields.project || fields.project.value.trim().length === 0) {
       showError("project", "Please tell us about your project.");
       ok = false;
     }
 
-    // Budget (optional, but if set must be valid)
     if (fields.budget && fields.budget.value && fields.budget.value.trim() === "") {
       showError("budget", "Please select a budget range.");
       ok = false;
     }
 
-    // Timeline (optional)
     if (fields.timeline && fields.timeline.value && fields.timeline.value.trim() === "") {
       showError("timeline", "Please select a time line.");
       ok = false;
     }
 
-    // What are you building? (required, min 10 chars)
     if (!fields.building || fields.building.value.trim().length < 10) {
       showError("building", "Please describe what you're building (at least 10 characters).");
       ok = false;
@@ -175,8 +231,6 @@
       building: fields.building.value.trim(),
     };
 
-    // Endpoint for the contact form submission.
-    // Wire this to your form backend (e.g. Formspree, Netlify Forms, or your own API).
     var endpoint = form.getAttribute("action") || "/api/contact";
 
     fetch(endpoint, {
@@ -198,4 +252,75 @@
         showMessage("Something went wrong. Please try again or email us directly at hello@anthrix.example.", "error");
       });
   });
+
+  // ============================================================
+  // NAV TOGGLE + MOBILE MENU
+  // ============================================================
+
+  var navBound = false;
+  function initNav() {
+    var navToggle = document.getElementById("navToggle");
+    var navMenu = document.getElementById("navMenu");
+    var breakpoint = 1180;
+    if (!navToggle || !navMenu || navBound) return;
+    navBound = true;
+
+    function closeMenu() {
+      navMenu.classList.remove("is-open");
+      navToggle.classList.remove("is-open");
+      navToggle.setAttribute("aria-expanded", "false");
+      navToggle.setAttribute("aria-label", "Open menu");
+    }
+
+    function toggleMenu() {
+      var open = !navMenu.classList.contains("is-open");
+      navMenu.classList.toggle("is-open", open);
+      navToggle.classList.toggle("is-open", open);
+      navToggle.setAttribute("aria-expanded", open === true);
+      navToggle.setAttribute("aria-label", open === true ? "Close menu" : "Open menu");
+    }
+
+    navToggle.addEventListener("click", toggleMenu);
+    navMenu.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", closeMenu);
+    });
+    document.addEventListener("click", function (event) {
+      if (window.innerWidth >= breakpoint) return;
+      if (!navMenu.classList.contains("is-open")) return;
+      if (navToggle.contains(event.target) || navMenu.contains(event.target)) return;
+      closeMenu();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeMenu();
+    });
+    window.addEventListener("resize", function () {
+      if (window.innerWidth >= breakpoint) closeMenu();
+    });
+  }
+
+  // ============================================================
+  // ACTIVE LINK HIGHLIGHTING (IntersectionObserver)
+  // ============================================================
+
+  function initActiveObserver() {
+    var sectionIds = ["home", "solution", "work", "contact"];
+    var hasSection = sectionIds.some(function (id) { return document.getElementById(id); });
+    if (!hasSection || typeof IntersectionObserver === "undefined") return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var id = entry.target.getAttribute("id");
+        document.querySelectorAll(".nav-links li a, .nav-link-book").forEach(function (a) {
+          a.classList.remove("active");
+        });
+        document.querySelectorAll('.nav-links li a[href="#' + id + '"], .nav-link-book[href="#' + id + '"]').forEach(function (a) {
+          a.classList.add("active");
+        });
+      });
+    }, { root: null, rootMargin: "-30% 0% -70%", threshold: 0 });
+    sectionIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+  }
 })();

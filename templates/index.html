@@ -1,56 +1,95 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="brand">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anthrix &middot; Capstone Systems &middot; Custom Websites &middot; Side Services</title>
+  <title>Anthrix Tech &middot; Capstone Systems &middot; Custom Websites &middot; Side Services</title>
+  <!-- Inline theme script &mdash; runs before CSS to avoid flash of wrong theme.
+       Default theme is "brand". Change this word to change the default. -->
   <script>
-    (function() {
+    (function () {
       try {
-        var saved = localStorage.getItem('theme');
-        if (saved) {
-          document.documentElement.setAttribute('data-theme', saved);
+        var saved = localStorage.getItem("theme");
+        if (saved && ["brand", "dark", "light"].indexOf(saved) !== -1) {
+          document.documentElement.setAttribute("data-theme", saved);
         } else {
-          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.setAttribute("data-theme", "brand");
         }
       } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute("data-theme", "brand");
       }
     })();
   </script>
   <link rel="stylesheet" href="../static/css/styles.css">
+  <link rel="stylesheet" href="../static/css/hero.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <div class="nav-logo" aria-label="Anthrix Tech">
-        <img src="../static/images/anthrix-tech-mark-light.png" alt="Anthrix Tech" class="logo-light">
-        <img src="../static/images/anthrix-tech-mark-dark.png" alt="Anthrix Tech" class="logo-dark">
-      </div>
-      <nav class="nav">
-        <a href="index.html">Home</a>
-        <a href="services.html">Services</a>
-        <a href="work.html">Work</a>
-        <a href="contact.html" class="nav-btn">Contact</a>
-        <button class="theme-toggle" aria-label="Toggle dark mode" id="themeToggle">
-          <span class="icon-sun" aria-hidden="true">&#9728;</span>
-          <span class="icon-moon" aria-hidden="true">&#9789;</span>
-        </button>
-      </nav>
-      <button class="nav-toggle" aria-label="Toggle menu">&#9776;</button>
-    </div>
-  </header>
+  <div data-component="top-nav"></div>
 
   <main>
-    <section class="hero">
+    <section id="home" class="hero">
       <div class="container hero-inner">
-        <h1>We build capstone systems, custom websites, and side services.</h1>
-        <p>For students, small businesses, and local offices.</p>
-        <a href="contact.html" class="btn btn-primary">Start a project</a>
+        <div class="hero-content">
+          <span class="hero-badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            IT SERVICES STUDIO
+          </span>
+          <h1 class="hero-headline">
+            <span class="line">WE BUILD</span>
+            <span class="line"><span class="grad">SYSTEMS</span></span>
+            <span class="line">THAT WORK.</span>
+          </h1>
+          <p class="hero-description">
+            Anthrix Tech builds capstone systems, customized systems, automated sheets and Excel files, and Canva designs for students and small businesses.
+          </p>
+          <div class="hero-buttons">
+            <a href="#book-a-call" class="hero-btn-primary">Book a call <span aria-hidden="true">→</span></a>
+            <a href="#work" class="hero-btn-secondary">View our work</a>
+          </div>
+          <hr class="hero-divider" aria-hidden="true">
+          <div class="hero-ratings" aria-label="Customer rating">
+            <div class="hero-stars" aria-hidden="true">
+              <svg class="star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <svg class="star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <span class="hero-stat-value">5.0</span>
+                <span class="hero-stat-label">RATING</span>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-value">500+</span>
+                <span class="hero-stat-label">CLIENTS SERVED</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-canvas-wrapper">
+            <canvas id="heroCanvas" class="hero-canvas" role="img" aria-label="Anthrix Tech 3D logo"></canvas>
+            <div class="hero-shadow" aria-hidden="true"></div>
+            <div class="hero-loading">
+              <div class="hero-shimmer" aria-hidden="true"></div>
+              <span>Loading 3D logo…</span>
+            </div>
+            <img class="hero-fallback" src="../static/images/anthrix-tech-mark.svg" alt="Anthrix Tech" />
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="features">
+    <section class="features text-overlay">
       <div class="container">
         <div class="feature-grid">
           <div class="feature-card">
@@ -69,16 +108,9 @@
       </div>
     </section>
   </main>
-
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-logo" aria-label="Anthrix Tech">
-        <img src="../static/images/anthrix-tech-mark-dark.png" alt="Anthrix Tech">
-      </div>
-      <p class="footer-copy">&copy; 2026 Anthrix. All rights reserved.</p>
-    </div>
-  </footer>
-
+  <div data-component="footer"></div>
+  <script src="../static/js/components.js"></script>
   <script src="../static/js/script.js"></script>
+  <script type="module" src="../static/js/hero.js"></script>
 </body>
 </html>

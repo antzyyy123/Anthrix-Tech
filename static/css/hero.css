@@ -1,0 +1,590 @@
+/* Anthrix Tech — Hero Section Styles
+   Restored layout: text on the LEFT, 3D logo on the RIGHT.
+   Only the hero section (#home) is styled here; nav/footer/theme system untouched.
+   Do not edit static/js/hero.js — the 3D logo code is unchanged. */
+
+/* ============================================================
+   1. PER-THEME HERO VARIABLES
+   ============================================================ */
+html[data-theme="brand"] {
+  --hero-vignette: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.10) 0%, transparent 70%);
+  --hero-glow-a: #FFFFFF;
+  --hero-glow-b: #7144D4;
+}
+html[data-theme="dark"] {
+  --hero-vignette: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.55) 0%, transparent 70%);
+  --hero-glow-a: #8B93FF;
+  --hero-glow-b: #7144D4;
+}
+html[data-theme="light"] {
+  --hero-vignette: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.04) 0%, transparent 70%);
+  --hero-glow-a: rgba(43, 54, 217, 0.35);
+  --hero-glow-b: rgba(43, 54, 217, 0.15);
+}
+
+/* Dot color per theme */
+html[data-theme="brand"], html[data-theme="dark"] {
+  --dot-color: rgba(255, 255, 255, 0.07);
+}
+html[data-theme="light"] {
+  --dot-color: rgba(1, 1, 9, 0.08);
+}
+
+/* ============================================================
+   2. HERO WRAPPER & BACKGROUND
+   ============================================================ */
+.hero {
+  position: relative;
+  min-height: calc(100vh - var(--nav-height, 80px));
+  padding: 48px 0;
+  overflow: hidden;
+  width: 100%;
+  background-color: var(--bg);
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle, var(--dot-color) 1px, transparent 1px),
+    var(--hero-vignette);
+  background-size: 24px 24px, 100% 100%;
+}
+
+/* Soft radial glow near the top */
+html[data-theme="brand"] .hero::after,
+html[data-theme="dark"] .hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 340px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(70px);
+  background: radial-gradient(circle, rgba(113, 68, 212, 0.16) 0%, transparent 70%);
+}
+
+html[data-theme="light"] .hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 340px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(70px);
+  background: radial-gradient(circle, rgba(43, 54, 217, 0.07) 0%, transparent 70%);
+}
+
+.hero .container {
+  position: relative;
+  z-index: 1;
+  max-width: 1000px;
+  width: 100%;
+  padding: 0 1.5rem;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   3. TWO-COLUMN GRID — TEXT LEFT, LOGO RIGHT
+   ============================================================ */
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+/* ============================================================
+   4. LEFT COLUMN — TEXT (LEFT-ALIGNED)
+   ============================================================ */
+.hero-content {
+  text-align: left;
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.hero-content > * {
+  margin: 0;
+}
+
+/* Spacing between stacked elements */
+.hero-badge + .hero-headline { margin-top: 20px; }
+.hero-headline + .hero-description { margin-top: 20px; }
+.hero-description + .hero-buttons { margin-top: 28px; }
+.hero-buttons + .hero-divider { margin-top: 36px; }
+.hero-divider + .hero-ratings { margin-top: 20px; }
+
+/* Pill badge with glowing green dot */
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 1.15rem;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="brand"] .hero-badge {
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="dark"] .hero-badge {
+  color: #10B981;
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+html[data-theme="light"] .hero-badge {
+  color: var(--text);
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #4ADE80;
+  box-shadow: 0 0 10px #4ADE80;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.65; transform: scale(1.18); }
+}
+
+/* Headline — three UPPERCASE block lines, middle word moving gradient */
+.hero-headline {
+  text-align: left;
+  font-size: clamp(2.6rem, 6vw, 5.2rem);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.line {
+  display: block;
+  width: auto;
+  background: none;
+}
+
+.line + .line { margin-top: 0; }
+
+/* Moving gradient word SYSTEMS — fills only the letters */
+.grad {
+  display: inline-block;
+  width: auto;
+  background-image: linear-gradient(90deg, #FDBA8C, #7144D4, #3B0A9E, #8B93FF, #FDBA8C);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 18px rgba(113, 68, 212, 0.55));
+  animation: gradMove 6s linear infinite;
+}
+
+html[data-theme="brand"] .grad {
+  background-image: linear-gradient(90deg, #FFE3C9, #FFFFFF, #D9C8FF, #FFE3C9, #FFE3C9);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+  filter: drop-shadow(0 0 18px rgba(113, 68, 212, 0.45));
+}
+
+html[data-theme="dark"] .grad {
+  background-image: linear-gradient(90deg, #FDBA8C, #B79CFF, #8B93FF, #FFFFFF, #FDBA8C);
+  filter: drop-shadow(0 0 18px rgba(113, 68, 212, 0.55));
+}
+
+html[data-theme="light"] .grad {
+  background-image: linear-gradient(90deg, #2B36D9, #7144D4, #6F86E8, #FDBA8C, #2B36D9);
+  filter: none;
+}
+
+@keyframes gradMove {
+  from { background-position: 0% 50%; }
+  to { background-position: 300% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grad { animation: none; background-position: 0% 50%; }
+  html[data-theme="brand"] .grad { filter: drop-shadow(0 0 10px rgba(113, 68, 212, 0.45)); text-shadow: none; }
+  html[data-theme="dark"] .grad { filter: drop-shadow(0 0 10px rgba(113, 68, 212, 0.45)); }
+}
+
+/* Description paragraph */
+.hero-description {
+  text-align: left;
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 52ch;
+}
+
+/* Buttons — two pills side by side */
+.hero-buttons {
+  text-align: left;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-btn-primary,
+.hero-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.hero-btn-primary {
+  background: var(--btn);
+  color: var(--on-btn);
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+}
+
+html[data-theme="brand"] .hero-btn-primary:hover,
+html[data-theme="dark"] .hero-btn-primary:hover {
+  box-shadow: 0 10px 28px rgba(113, 68, 212, 0.45);
+}
+
+.hero-btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.hero-btn-secondary:hover {
+  transform: translateY(-2px);
+  background: var(--surface);
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+/* Thin divider */
+.hero-divider {
+  height: 1px;
+  background: var(--border);
+  border: none;
+  margin: 0;
+  width: 100%;
+}
+
+/* Ratings row */
+.hero-ratings {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+
+.hero-stars {
+  display: flex;
+  gap: 0.28rem;
+}
+
+.star {
+  width: 18px;
+  height: 18px;
+  fill: #F59E0B;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.hero-stat-value {
+  font-weight: 700;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.hero-stat-label {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ============================================================
+   5. RIGHT COLUMN — 3D CANVAS (UNCHANGED THREE.JS CODE)
+   ============================================================ */
+.hero-visual {
+  position: relative;
+  height: clamp(340px, 60vh, 560px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* No background, no border, no border-radius — floats on page bg */
+}
+
+.hero-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  background: transparent;
+  /* No border, shadow, or radius */
+}
+
+/* Canvas itself — transparent */
+.hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 1;
+  background: transparent !important;
+}
+
+/* Per-theme CSS glow on canvas */
+html[data-theme="brand"] .hero-canvas,
+html[data-theme="dark"] .hero-canvas {
+  filter: drop-shadow(0 0 14px var(--hero-glow-a)) drop-shadow(0 0 36px var(--hero-glow-b));
+}
+html[data-theme="light"] .hero-canvas {
+  filter: drop-shadow(0 10px 30px rgba(43, 54, 217, 0.35));
+}
+
+/* Soft static glow behind the logo (extends past canvas) */
+html[data-theme="brand"] .hero-visual::before,
+html[data-theme="dark"] .hero-visual::before,
+html[data-theme="light"] .hero-visual::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, var(--hero-glow-b) 0%, transparent 70%);
+  animation: heroAura 6s ease-in-out infinite;
+}
+
+@keyframes heroAura {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.55; transform: translate(-50%, -50%) scale(1.12); }
+}
+
+/* Ground shadow under logo (light theme only) */
+.hero-shadow {
+  position: absolute;
+  bottom: -8%;
+  left: 50%;
+  transform: translateX(-50%) scale(1);
+  width: 120px;
+  height: 20px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+html[data-theme="light"] .hero-shadow {
+  background: radial-gradient(ellipse at center, rgba(43, 54, 217, 0.18) 0%, transparent 70%);
+  filter: blur(12px);
+  opacity: 1;
+  animation: heroShadow 5s ease-in-out infinite;
+}
+
+@keyframes heroShadow {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+  50% { transform: translateX(-50%) scale(1.25); opacity: 0.6; }
+}
+
+/* ============================================================
+   6. LOADING & FALLBACK
+   ============================================================ */
+.hero-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.15);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.hero-shimmer {
+  width: 60px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+  margin-top: 0.8rem;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Fallback static SVG */
+.hero-fallback {
+  display: none;
+  width: 200px;
+  height: auto;
+  filter: drop-shadow(0 0 14px var(--logo-a));
+}
+
+.is-fallback {
+  display: block !important;
+}
+
+html[data-theme="brand"] .hero-fallback,
+html[data-theme="dark"] .hero-fallback {
+  animation: heroLogoPulse 3s ease-in-out infinite;
+}
+
+@keyframes heroLogoPulse {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--logo-a)) drop-shadow(0 0 18px rgba(113, 68, 212, 0.6)); }
+  50% { filter: drop-shadow(0 0 10px var(--logo-a)) drop-shadow(0 0 28px rgba(113, 68, 212, 0.8)); }
+}
+
+/* ============================================================
+   7. FADE-IN INTRO
+   ============================================================ */
+.hero-content > *,
+.hero-visual {
+  opacity: 0;
+  animation: heroFadeIn 1s ease forwards;
+}
+
+.hero-badge { animation-delay: 0.1s; }
+.hero-headline { animation-delay: 0.2s; }
+.hero-description { animation-delay: 0.4s; }
+.hero-buttons { animation-delay: 0.5s; }
+.hero-divider { animation-delay: 0.7s; }
+.hero-ratings { animation-delay: 0.8s; }
+.hero-visual { animation-delay: 0.1s; }
+
+@keyframes heroFadeIn {
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-content > *,
+  .hero-visual { animation: none; opacity: 1; }
+  .badge-dot { animation: none; opacity: 1; transform: none; }
+  .hero-shimmer { animation: none; }
+  .hero-visual::before { animation: none; }
+  .hero-shadow { animation: none; }
+}
+
+/* ============================================================
+   8. RESPONSIVE — stack on tablet/mobile
+   ============================================================ */
+@media (max-width: 768px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .hero-visual {
+    order: 2;
+    height: clamp(260px, 40vh, 340px);
+  }
+
+  .hero-content {
+    order: 1;
+    text-align: left;
+  }
+
+  .hero-headline {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-ratings {
+    gap: 1rem;
+    justify-content: flex-start;
+  }
+
+  .hero-stats {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    min-height: auto;
+    padding: 32px 0;
+  }
+
+  .hero-headline {
+    font-size: clamp(1.75rem, 10vw, 2.5rem);
+  }
+
+  .hero-visual {
+    height: clamp(220px, 35vh, 300px);
+  }
+
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
