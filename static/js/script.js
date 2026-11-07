@@ -3,6 +3,41 @@
 (function () {
   "use strict";
 
+  // Theme toggle
+  var html = document.documentElement;
+  var themeToggle = document.getElementById("themeToggle");
+
+  function setTheme(theme) {
+    html.setAttribute("data-theme", theme);
+    try {
+      localStorage.setItem("theme", theme);
+    } catch (e) {
+      // localStorage unavailable; ignore
+    }
+    updateToggleIcons(theme);
+  }
+
+  function updateToggleIcons(theme) {
+    if (!themeToggle) return;
+    var sun = themeToggle.querySelector(".icon-sun");
+    var moon = themeToggle.querySelector(".icon-moon");
+    if (theme === "dark") {
+      if (sun) sun.style.display = "none";
+      if (moon) moon.style.display = "block";
+    } else {
+      if (sun) sun.style.display = "block";
+      if (moon) moon.style.display = "none";
+    }
+  }
+
+  if (themeToggle) {
+    themeToggle.addEventListener("click", function () {
+      var current = html.getAttribute("data-theme");
+      var next = current === "dark" ? "light" : "dark";
+      setTheme(next);
+    });
+  }
+
   // Mobile nav toggle
   var toggle = document.querySelector(".nav-toggle");
   var nav = document.querySelector(".nav");
