@@ -25,6 +25,23 @@
     });
   }
 
+  function injectBubbleNav() {
+    if (!document.querySelector('[data-component="top-nav"], .site-nav') || document.getElementById("bubbleNav")) return;
+    document.body.insertAdjacentHTML("beforeend",
+      '<div class="bubble-nav" id="bubbleNav" role="navigation" aria-label="Quick navigation">' +
+        '<button type="button" class="bubble bubble-main" id="bubbleMain" aria-label="Open menu" aria-expanded="false" aria-controls="bubbleItems"></button>' +
+        '<div id="bubbleItems" aria-hidden="true">' +
+          '<a class="bubble bubble-item" href="index.html#home" aria-label="Home" data-section="home" tabindex="-1"></a>' +
+          '<a class="bubble bubble-item" href="services.html#solution" aria-label="Solution" data-section="solution" tabindex="-1"></a>' +
+          '<a class="bubble bubble-item" href="work.html#work" aria-label="Work" data-section="work" tabindex="-1"></a>' +
+          '<a class="bubble bubble-item" href="contact.html#contact" aria-label="Contact" data-section="contact" tabindex="-1"></a>' +
+          '<a class="bubble bubble-item" href="contact.html#contact" aria-label="Book a call" data-section="book-a-call" tabindex="-1"></a>' +
+        '</div>' +
+      '</div>');
+  }
+
+  injectBubbleNav();
+
   function ready() {
     Promise.all([
       loadComponent('[data-component="top-nav"]', "components/top-nav.html"),
