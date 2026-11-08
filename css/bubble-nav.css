@@ -190,11 +190,22 @@ html[data-theme="brand"] .bubble-item.is-active {
 
   .nav-toggle,
   .nav-menu,
-  .theme-segmented,
   .nav-links,
   .btn-touch--desktop,
   .btn-touch--mobile {
     display: none !important;
+  }
+
+  /* Theme switcher stays in the top bar, on the far right */
+  .site-nav .theme-segmented {
+    display: flex !important;
+    margin-left: auto;
+    height: 40px;
+  }
+
+  .site-nav .theme-option {
+    width: 32px;
+    height: 32px;
   }
 
   .bubble-nav.bubble-nav--ready {

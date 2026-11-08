@@ -13,8 +13,11 @@
 
   if (!nav || !main || !itemsContainer) return;
 
+  // The theme switch lives in the top bar now: drop any leftover theme item
+  var staleTheme = document.getElementById("bubbleTheme");
+  if (staleTheme) staleTheme.remove();
+
   var itemEls = Array.prototype.slice.call(itemsContainer.querySelectorAll(".bubble-item"));
-  var themeBtn = document.getElementById("bubbleTheme");
 
   var SIZE = 56;            // main bubble diameter (matches .bubble-main)
   var ITEM = 46;            // menu item diameter (matches .bubble-item)
@@ -41,9 +44,6 @@
     work: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2"/></svg>',
     contact: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>',
     book: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01"/></svg>',
-    brand: '<span class="theme-dot" aria-hidden="true"></span>',
-    dark: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg>',
-    light: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>',
   };
 
   function isPhone() {
@@ -101,12 +101,6 @@
       });
     });
     main.insertBefore(mark, main.firstChild);
-  }
-
-  function updateThemeIcon() {
-    if (!themeBtn) return;
-    var theme = document.documentElement.getAttribute("data-theme") || "brand";
-    themeBtn.innerHTML = icons[theme] ? icons[theme] : icons.brand;
   }
 
   function refreshSafeInsets() {
@@ -495,14 +489,6 @@
     applyPosition();
     spreadPositions();
     applySpread(false);
-    updateThemeIcon();
-
-    if (themeBtn) {
-      themeBtn.addEventListener("click", function () {
-        if (typeof window.__cycleTheme === "function") window.__cycleTheme();
-        updateThemeIcon();
-      });
-    }
 
     main.addEventListener("pointerdown", onPointerDown);
     main.addEventListener("pointermove", onPointerMove, { passive: false });
@@ -528,12 +514,6 @@
           window.location.href = href;
         }
       });
-    });
-
-    var themeObserver = new MutationObserver(updateThemeIcon);
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
     });
 
     if (typeof IntersectionObserver !== "undefined") {
