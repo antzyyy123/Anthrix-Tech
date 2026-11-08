@@ -1,4 +1,7 @@
 // Anthrix Tech — Bubble Navigation (phones only)
+// - Draggable bubble that snaps to the nearest screen edge (magnet)
+// - Menu items fan out around the bubble, adapting to any edge, corner,
+//   screen size, orientation and safe area, and never cover the top bar
 (function () {
   "use strict";
 
@@ -12,17 +15,25 @@
 
   var itemEls = Array.prototype.slice.call(itemsContainer.querySelectorAll(".bubble-item"));
   var themeBtn = document.getElementById("bubbleTheme");
+
+  var SIZE = 56;            // main bubble diameter (matches .bubble-main)
+  var ITEM = 46;            // menu item diameter (matches .bubble-item)
+  var margin = 8;           // gap kept from every screen edge and the top bar
+  var dragThreshold = 6;
+  var EASE = "cubic-bezier(0.34, 1.56, 0.64, 1)";
+  var STORE_KEY = "bubbleNavSnap";
+  var EDGES = ["left", "right", "top", "bottom"];
+
+  var snapState = { edge: "right", t: 1 }; // edge + position along it (0..1)
   var pos = { x: 0, y: 0 };
   var safe = { top: 0, right: 0, bottom: 0, left: 0 };
   var open = false;
   var dragging = false;
   var activePointerId = null;
   var dragStart = { x: 0, y: 0 };
-  var lastPointer = { x: 0, y: 0 };
+  var startPos = { x: 0, y: 0 };
   var rafId = 0;
   var initialized = false;
-  var margin = 8;
-  var dragThreshold = 6;
 
   var icons = {
     home: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>',
@@ -37,6 +48,14 @@
 
   function isPhone() {
     return mqPhone.matches || mqLandPhone.matches;
+  }
+
+  function reducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
   }
 
   function setLogoMark() {
@@ -106,23 +125,100 @@
     probe.remove();
   }
 
-  function clampPoint(x, y, size) {
-    var viewportWidth = document.documentElement.clientWidth || window.innerWidth;
-    var minX = margin + safe.left;
-    var minY = margin + safe.top;
-    var maxX = Math.max(minX, viewportWidth - size - margin - safe.right);
-    var maxY = Math.max(minY, window.innerHeight - size - margin - safe.bottom);
+  // ------------------------------------------------------------
+  // Screen geometry (read live, so any phone size works)
+  // ------------------------------------------------------------
+
+  function viewport() {
     return {
-      x: Math.min(Math.max(x, minX), maxX),
-      y: Math.min(Math.max(y, minY), maxY),
+      w: document.documentElement.clientWidth || window.innerWidth,
+      h: window.innerHeight,
     };
   }
 
-  function clampPosition() {
-    var clamped = clampPoint(pos.x, pos.y, 56);
-    pos.x = clamped.x;
-    pos.y = clamped.y;
+  // Lowest y that bubble and items may use: just below the top bar
+  function topLimit() {
+    var header = document.querySelector(".site-nav");
+    var headerH = header ? header.offsetHeight : 64;
+    return Math.max(safe.top + margin, headerH + margin);
   }
+
+  function bounds() {
+    var v = viewport();
+    var minX = margin + safe.left;
+    var minY = topLimit();
+    return {
+      w: v.w,
+      h: v.h,
+      minX: minX,
+      minY: minY,
+      maxX: Math.max(minX, v.w - SIZE - margin - safe.right),
+      maxY: Math.max(minY, v.h - SIZE - margin - safe.bottom),
+    };
+  }
+
+  // ------------------------------------------------------------
+  // Magnet: edge + ratio <-> pixel position
+  // ------------------------------------------------------------
+
+  function posFromState() {
+    var b = bounds();
+    var t = clamp(snapState.t, 0, 1);
+    switch (snapState.edge) {
+      case "left":
+        return { x: b.minX, y: b.minY + t * (b.maxY - b.minY) };
+      case "top":
+        return { x: b.minX + t * (b.maxX - b.minX), y: b.minY };
+      case "bottom":
+        return { x: b.minX + t * (b.maxX - b.minX), y: b.maxY };
+      default:
+        return { x: b.maxX, y: b.minY + t * (b.maxY - b.minY) };
+    }
+  }
+
+  function stateFromPos(p) {
+    var b = bounds();
+    var dist = {
+      left: p.x - b.minX,
+      right: b.maxX - p.x,
+      top: p.y - b.minY,
+      bottom: b.maxY - p.y,
+    };
+    var edge = "right";
+    EDGES.forEach(function (name) {
+      if (dist[name] < dist[edge]) edge = name;
+    });
+    var alongY = (p.y - b.minY) / (b.maxY - b.minY || 1);
+    var alongX = (p.x - b.minX) / (b.maxX - b.minX || 1);
+    var t = edge === "left" || edge === "right" ? alongY : alongX;
+    return { edge: edge, t: clamp(t, 0, 1) };
+  }
+
+  function saveState() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(snapState));
+    } catch (error) {
+      console.warn("Bubble navigation position could not be saved.", error);
+    }
+  }
+
+  function loadState() {
+    try {
+      var value = localStorage.getItem(STORE_KEY);
+      if (value) {
+        var saved = JSON.parse(value);
+        if (saved && EDGES.indexOf(saved.edge) !== -1 && Number.isFinite(saved.t)) {
+          snapState = { edge: saved.edge, t: clamp(saved.t, 0, 1) };
+        }
+      }
+    } catch (error) {
+      console.warn("Bubble navigation position could not be restored.", error);
+    }
+  }
+
+  // ------------------------------------------------------------
+  // Positioning
+  // ------------------------------------------------------------
 
   function applyPosition() {
     rafId = 0;
@@ -133,72 +229,125 @@
     if (!rafId) rafId = window.requestAnimationFrame(applyPosition);
   }
 
-  function savePosition() {
-    try {
-      localStorage.setItem("bubbleNavPos", JSON.stringify(pos));
-    } catch (error) {
-      console.warn("Bubble navigation position could not be saved.", error);
-    }
+  function setMainTransition(ms) {
+    main.style.transition = ms
+      ? "transform " + ms + "ms " + (reducedMotion() ? "ease" : EASE) + ", background-color 0.2s ease"
+      : "none";
   }
 
-  function loadPosition() {
-    var saved = null;
-    try {
-      var value = localStorage.getItem("bubbleNavPos");
-      if (value) saved = JSON.parse(value);
-    } catch (error) {
-      console.warn("Bubble navigation position could not be restored.", error);
-    }
+  function snapToEdge(animate) {
+    snapState = stateFromPos(pos);
+    pos = posFromState();
+    setMainTransition(animate ? (reducedMotion() ? 160 : 520) : 0);
+    applyPosition();
+    saveState();
+  }
 
-    if (
-      saved &&
-      Number.isFinite(saved.x) &&
-      Number.isFinite(saved.y)
-    ) {
-      pos = { x: saved.x, y: saved.y };
-    } else {
-      pos = {
-        x: (document.documentElement.clientWidth || window.innerWidth) - 76,
-        y: window.innerHeight - 76,
-      };
-    }
-    clampPosition();
+  function placeFromState() {
+    pos = posFromState();
+    setMainTransition(0);
     applyPosition();
   }
 
-  function spreadPositions() {
-    var viewportWidth = document.documentElement.clientWidth || window.innerWidth;
-    var center = { x: pos.x + 28, y: pos.y + 28 };
-    var viewportCenter = { x: viewportWidth / 2, y: window.innerHeight / 2 };
-    var dx = viewportCenter.x - center.x;
-    var dy = viewportCenter.y - center.y;
-    var distance = Math.hypot(dx, dy);
-    var startAngle = distance > 120
-      ? Math.atan2(dy, dx) - (100 * Math.PI / 180)
-      : -Math.PI / 2;
+  // ------------------------------------------------------------
+  // Item layout: fan the 6 items around the bubble on arcs that
+  // stay inside the screen and below the top bar. If an arc is
+  // full, the rest go on a second arc further out.
+  // ------------------------------------------------------------
 
+  function itemLimits() {
+    var v = viewport();
+    return {
+      l: margin + safe.left + ITEM / 2,
+      r: v.w - margin - safe.right - ITEM / 2,
+      t: topLimit() + ITEM / 2,
+      b: v.h - margin - safe.bottom - ITEM / 2,
+    };
+  }
+
+  // Longest run of angles where an item at radius r stays on screen
+  function arcAt(cx, cy, r, lim) {
+    var step = 2;
+    var n = 360 / step;
+    var ok = [];
+    var a, rad, ix, iy, i;
+    for (a = 0; a < 360; a += step) {
+      rad = (a * Math.PI) / 180;
+      ix = cx + r * Math.cos(rad);
+      iy = cy + r * Math.sin(rad);
+      ok.push(ix >= lim.l && ix <= lim.r && iy >= lim.t && iy <= lim.b);
+    }
+    var all = true;
+    for (i = 0; i < n; i++) {
+      if (!ok[i]) { all = false; break; }
+    }
+    if (all) return { full: true, start: -90, len: 360 };
+
+    var best = 0;
+    var bestStart = 0;
+    for (var s = 0; s < n; s++) {
+      if (ok[s] && !ok[(s - 1 + n) % n]) {
+        var run = 0;
+        while (ok[(s + run) % n] && run < n) run++;
+        if (run > best) { best = run; bestStart = s; }
+      }
+    }
+    return { full: false, start: bestStart * step, len: best > 0 ? (best - 1) * step : -1 };
+  }
+
+  function fan(cx, cy, count, gap, firstRadius, ringStep, maxRings) {
+    var lim = itemLimits();
+    var out = [];
+    var left = count;
+    var r = firstRadius;
+    for (var ring = 0; ring < maxRings && left > 0; ring++, r += ringStep) {
+      var arc = arcAt(cx, cy, r, lim);
+      if (arc.len < 0) continue;
+      var capacity = arc.full
+        ? Math.floor((2 * Math.PI * r) / gap)
+        : Math.floor((arc.len * Math.PI / 180 * r) / gap) + 1;
+      var take = Math.min(capacity, left);
+      if (take < 1) continue;
+      for (var i = 0; i < take; i++) {
+        var angle;
+        if (arc.full) angle = arc.start + (i * 360) / take;
+        else if (take === 1) angle = arc.start + arc.len / 2;
+        else angle = arc.start + (i * arc.len) / (take - 1);
+        var rad = (angle * Math.PI) / 180;
+        out.push({ x: cx + r * Math.cos(rad) - ITEM / 2, y: cy + r * Math.sin(rad) - ITEM / 2 });
+      }
+      left -= take;
+    }
+    return out;
+  }
+
+  function spreadPositions() {
+    var cx = pos.x + SIZE / 2;
+    var cy = pos.y + SIZE / 2;
+    var n = itemEls.length;
+
+    var points = fan(cx, cy, n, ITEM + 8, 92, 56, 6);
+    if (points.length < n) points = fan(cx, cy, n, ITEM + 2, 72, 52, 9); // very small screens
+
+    var lim = itemLimits();
     itemEls.forEach(function (element, index) {
-      var angle = distance > 120
-        ? startAngle + (index * 200 * Math.PI / 180) / (itemEls.length - 1)
-        : startAngle + index * Math.PI / 3;
-      var point = clampPoint(
-        center.x + 96 * Math.cos(angle) - 23,
-        center.y + 96 * Math.sin(angle) - 23,
-        46
-      );
-      element.dataset.openX = point.x;
-      element.dataset.openY = point.y;
-      element.dataset.closedX = center.x - 23;
-      element.dataset.closedY = center.y - 23;
+      var p = points[index] || {
+        x: clamp(cx - ITEM / 2, lim.l - ITEM / 2, lim.r - ITEM / 2),
+        y: clamp(cy - ITEM / 2, lim.t - ITEM / 2, lim.b - ITEM / 2),
+      };
+      element.dataset.openX = p.x;
+      element.dataset.openY = p.y;
+      element.dataset.closedX = cx - ITEM / 2;
+      element.dataset.closedY = cy - ITEM / 2;
     });
   }
 
   function applySpread(shouldOpen) {
-    var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var reduced = reducedMotion();
     itemEls.forEach(function (element, index) {
-      var delay = shouldOpen && !reducedMotion ? index * 45 : 0;
+      var delay = shouldOpen && !reduced ? index * 45 : 0;
       element.style.transitionDelay = delay + "ms";
-      element.style.transitionDuration = (reducedMotion ? 160 : shouldOpen ? 450 : 180) + "ms";
+      element.style.transitionDuration = (reduced ? 160 : shouldOpen ? 450 : 180) + "ms";
       var x = shouldOpen ? element.dataset.openX : element.dataset.closedX;
       var y = shouldOpen ? element.dataset.openY : element.dataset.closedY;
       element.style.transform = "translate3d(" + x + "px, " + y + "px, 0) scale(" +
@@ -226,31 +375,34 @@
     setOpen(!open);
   }
 
+  // ------------------------------------------------------------
+  // Pointer handling
+  // ------------------------------------------------------------
+
   function onPointerDown(event) {
     if (!isPhone() || (event.pointerType === "mouse" && event.button !== 0)) return;
     activePointerId = event.pointerId;
     main.setPointerCapture(event.pointerId);
     dragging = false;
     dragStart = { x: event.clientX, y: event.clientY };
-    lastPointer = { x: event.clientX, y: event.clientY };
+    startPos = { x: pos.x, y: pos.y };
   }
 
   function onPointerMove(event) {
     if (event.pointerId !== activePointerId || !main.hasPointerCapture(event.pointerId)) return;
-    var distance = Math.hypot(event.clientX - dragStart.x, event.clientY - dragStart.y);
-    if (!dragging && distance < dragThreshold) return;
+    var dx = event.clientX - dragStart.x;
+    var dy = event.clientY - dragStart.y;
+    if (!dragging && Math.hypot(dx, dy) < dragThreshold) return;
 
     if (!dragging) {
       dragging = true;
       if (open) setOpen(false);
+      setMainTransition(0);
     }
 
-    var dx = event.clientX - lastPointer.x;
-    var dy = event.clientY - lastPointer.y;
-    lastPointer = { x: event.clientX, y: event.clientY };
-    pos.x += dx;
-    pos.y += dy;
-    clampPosition();
+    var b = bounds();
+    pos.x = clamp(startPos.x + dx, b.minX - SIZE / 2, b.maxX + SIZE / 2);
+    pos.y = clamp(startPos.y + dy, b.minY - 10, b.maxY + SIZE / 2);
     schedulePosition();
     event.preventDefault();
   }
@@ -260,8 +412,8 @@
     if (main.hasPointerCapture(event.pointerId)) main.releasePointerCapture(event.pointerId);
     activePointerId = null;
     if (dragging) {
-      savePosition();
       dragging = false;
+      snapToEdge(true);
       return;
     }
     toggleMenu();
@@ -271,7 +423,7 @@
     if (event.pointerId !== activePointerId) return;
     if (main.hasPointerCapture(event.pointerId)) main.releasePointerCapture(event.pointerId);
     activePointerId = null;
-    if (dragging) savePosition();
+    if (dragging) snapToEdge(true);
     dragging = false;
   }
 
@@ -286,12 +438,15 @@
     }
   }
 
+  // ------------------------------------------------------------
+  // Resize / orientation / breakpoint
+  // ------------------------------------------------------------
+
   function updateBreakpoint() {
     if (isPhone()) {
       nav.classList.add("bubble-nav--ready");
       refreshSafeInsets();
-      clampPosition();
-      schedulePosition();
+      placeFromState();
     } else {
       if (open) setOpen(false);
       nav.classList.remove("bubble-nav--ready");
@@ -303,9 +458,9 @@
       updateBreakpoint();
       return;
     }
+    if (dragging) return;
     refreshSafeInsets();
-    clampPosition();
-    schedulePosition();
+    placeFromState();
     if (open) {
       spreadPositions();
       applySpread(true);
@@ -315,6 +470,8 @@
   function onOrientationChange() {
     if (open) setOpen(false);
     onResize();
+    // Browsers report the new height a moment late
+    window.setTimeout(onResize, 250);
   }
 
   function init() {
@@ -332,7 +489,10 @@
       element.innerHTML = icons[iconNames[index]];
     });
 
-    loadPosition();
+    loadState();
+    refreshSafeInsets();
+    pos = posFromState();
+    applyPosition();
     spreadPositions();
     applySpread(false);
     updateThemeIcon();
@@ -395,6 +555,7 @@
 
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onOrientationChange);
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", onResize);
     mqPhone.addEventListener("change", updateBreakpoint);
     mqLandPhone.addEventListener("change", updateBreakpoint);
     updateBreakpoint();
