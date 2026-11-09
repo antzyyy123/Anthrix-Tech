@@ -35,51 +35,64 @@
         <div class="contact-inner" id="book-a-call">
           <div class="contact-info">
             <h2>Get in touch</h2>
-            <p>Tell us about your project. We respond to every submission.</p>
+            <p>Building a capstone or thesis system, or need a website for your business? Tell us what you have in mind, and we'll get back to you.</p>
+            <a class="btn btn-primary" href="book-a-call.html">Book a call</a>
             <ul class="contact-details">
-              <li><strong>Email:</strong> hello@anthrix.example</li>
-              <li><strong>Location:</strong> Manila, Philippines</li>
+              <li><strong>Email:</strong> anthonyojera02@gmail.com</li>
+              <li><strong>Location:</strong> Iloilo, Philippines</li>
             </ul>
           </div>
 
           <form id="contactForm" class="contact-form" novalidate action="https://formspree.io/f/mqppoldb" method="POST">
+            <p class="call-booking-summary" id="callBookingSummary" hidden></p>
             <h2>Send a message</h2>
+            <input type="hidden" id="callDate" name="call_date" value="">
+            <input type="hidden" id="callTime" name="call_time" value="">
 
             <div class="form-row">
               <div class="field">
                 <label for="name">Name <span class="req">*</span></label>
-                <input type="text" id="name" name="name" placeholder="Your full name" required minlength="2">
-                <span class="error" id="nameError"></span>
+                <input type="text" id="name" name="name" placeholder="Dela Cruz, Juan P." required minlength="2" pattern="[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ.'-]*(?: [A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ.'-]*)*,\s*[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ'-]*(?: [A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ'-]*)*(?:\s+[A-Za-z]\.)?" aria-invalid="false" aria-describedby="nameError">
+                <span class="error" id="nameError" aria-live="polite"></span>
               </div>
               <div class="field">
                 <label for="email">Email <span class="req">*</span></label>
-                <input type="email" id="email" name="email" placeholder="you@company.com" required>
-                <span class="error" id="emailError"></span>
+                <input type="email" id="email" name="email" placeholder="juan@your-school.edu.ph" required maxlength="254" aria-invalid="false" aria-describedby="emailError">
+                <span class="error" id="emailError" aria-live="polite"></span>
               </div>
             </div>
 
             <div class="field full">
               <label for="project">Project <span class="req">*</span></label>
-              <input type="text" id="project" name="project" placeholder="e.g. University capstone system" required>
-              <span class="error" id="projectError"></span>
+              <select id="project" name="project" required aria-invalid="false" aria-describedby="projectError">
+                <option value="" selected disabled>Select project type</option>
+                <option value="capstone-thesis-system">Capstone / thesis system</option>
+                <option value="custom-website">Custom website</option>
+                <option value="business-website-landing-page">Business website or landing page</option>
+                <option value="inventory-pos-sales-system">Inventory / POS / sales system</option>
+                <option value="mobile-app">Mobile app</option>
+                <option value="other">Other (not listed)</option>
+              </select>
+              <span class="error" id="projectError" aria-live="polite"></span>
             </div>
 
             <div class="form-row">
               <div class="field">
                 <label for="budget">Budget</label>
-                <select id="budget" name="budget">
+                <select id="budget" name="budget" aria-invalid="false" aria-describedby="budgetError">
                   <option value="">Select budget range</option>
-                  <option value="under-5k">Under &pound;5,000</option>
-                  <option value="5k-15k">&pound;5,000 &ndash; &pound;15,000</option>
-                  <option value="15k-30k">&pound;15,000 &ndash; &pound;30,000</option>
-                  <option value="over-30k">Over &pound;30,000</option>
+                  <option value="under-5k">Under ₱5,000</option>
+                  <option value="5k-15k">₱5,000 &ndash; ₱15,000</option>
+                  <option value="15k-30k">₱15,000 &ndash; ₱30,000</option>
+                  <option value="30k-60k">₱30,000 &ndash; ₱60,000</option>
+                  <option value="over-60k">Over ₱60,000</option>
                   <option value="not-sure">Not sure yet</option>
                 </select>
-                <span class="error" id="budgetError"></span>
+                <span class="error" id="budgetError" aria-live="polite"></span>
               </div>
               <div class="field">
                 <label for="timeline">Time line</label>
-                <select id="timeline" name="timeline">
+                <select id="timeline" name="timeline" aria-invalid="false" aria-describedby="timelineError">
                   <option value="">Select time line</option>
                   <option value="asap">As soon as possible</option>
                   <option value="1-month">Within 1 month</option>
@@ -93,8 +106,8 @@
 
             <div class="field full">
               <label for="building">What are you building? <span class="req">*</span></label>
-              <textarea id="building" name="building" rows="5" placeholder="Describe your project in detail..." required minlength="10"></textarea>
-              <span class="error" id="buildingError"></span>
+              <textarea id="building" name="building" rows="5" placeholder="For example: a thesis system for tracking clinic appointments, or a website for my shop. What should it help people do?" required minlength="10" aria-invalid="false" aria-describedby="buildingError"></textarea>
+              <span class="error" id="buildingError" aria-live="polite"></span>
             </div>
 
             <button type="submit" class="btn btn-primary btn-submit" id="submitBtn">Send message</button>

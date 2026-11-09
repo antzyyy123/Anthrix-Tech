@@ -1,0 +1,765 @@
+.booking-page {
+  min-height: calc(100vh - var(--nav-height));
+  padding: clamp(1.5rem, 4vw, 3.5rem) 0 3rem;
+  color: var(--text);
+}
+
+.booking-container {
+  max-width: 1440px;
+}
+
+.booking-back {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  font-weight: 600;
+}
+
+.booking-header {
+  max-width: 60ch;
+  margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.booking-header h1 {
+  margin: 0 0 0.6rem;
+  color: var(--text);
+  font-size: clamp(2rem, 4.5vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+}
+
+.booking-header p {
+  margin: 0 0 0.65rem;
+  color: var(--muted);
+}
+
+.booking-header .manila-clock {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.booking-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.calendar-area,
+.timeline-area {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.month-heading {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.month-heading h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.2rem, 2.2vw, 1.65rem);
+  font-weight: 750;
+  text-align: center;
+}
+
+.month-nav {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.month-nav:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.calendar-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 2.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.month-summary {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.text-button {
+  min-height: 40px;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.text-button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.text-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(2.4rem, 0.48fr) minmax(2.4rem, 0.48fr);
+  gap: clamp(0.2rem, 0.7vw, 0.6rem);
+}
+
+.calendar-weekday {
+  padding: 0.45rem 0.25rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.calendar-weekday.is-weekend {
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.calendar-empty {
+  min-height: 4.5rem;
+}
+
+.calendar-day {
+  min-width: 0;
+  min-height: 4.5rem;
+  padding: 0.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.calendar-day.is-weekend {
+  align-items: center;
+  padding-inline: 0.1rem;
+  color: var(--muted);
+  background: transparent;
+  border-color: transparent;
+}
+
+.calendar-day:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+
+.calendar-day.is-selected {
+  border: 2px solid var(--accent);
+  background: var(--btn);
+  color: var(--on-btn);
+}
+
+.calendar-day.is-today:not(.is-selected) {
+  border-color: var(--accent);
+}
+
+.calendar-day.is-past {
+  opacity: 0.36;
+}
+
+.calendar-day.is-holiday {
+  color: #fecaca;
+  border-color: #fecaca;
+}
+
+.calendar-day.is-holiday.is-selected {
+  background: var(--btn);
+  color: #fecaca;
+}
+
+.calendar-day:disabled {
+  cursor: not-allowed;
+}
+
+.calendar-day-number {
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.today-stamp {
+  color: var(--accent);
+  font-size: 0.67rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: lowercase;
+}
+
+.holiday-stamp {
+  max-width: 100%;
+  padding: 0.08rem 0.24rem;
+  overflow: hidden;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-day.is-weekend .holiday-stamp {
+  max-width: 2.4rem;
+  font-size: 0.55rem;
+}
+
+.month-holidays {
+  margin-top: 1.1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.month-holidays h3 {
+  margin: 0 0 0.4rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.month-holidays ul {
+  height: 4.5rem;
+  margin: 0;
+  overflow: auto;
+  padding-left: 1.2rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.month-holidays li.is-holiday {
+  color: #fecaca;
+}
+
+.holiday-notice {
+  margin: 0 0 0.8rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.holiday-notice-slot {
+  min-height: 1.25rem;
+}
+
+.timeline-area {
+  min-height: 36rem;
+  transition: opacity 140ms ease;
+}
+
+.timeline-area.is-idle {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.timeline-area.is-idle {
+  opacity: 0.72;
+}
+
+.timeline-area h2,
+.before-call-card h2 {
+  margin: 0 0 0.35rem;
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 750;
+}
+
+.timeline-prompt,
+.timeline-date {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.timeline-prompt[hidden],
+.timeline-date[hidden] {
+  display: none;
+}
+
+.timeline {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.time-slot {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.time-slot:hover:not(:disabled) {
+  border-left-color: var(--accent);
+}
+
+.time-slot.is-selected {
+  border-color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--btn);
+  color: var(--on-btn);
+  font-weight: 700;
+}
+
+.lunch-break {
+  padding: 0.4rem 0.75rem;
+  border-block: 1px dashed var(--border);
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.no-times {
+  margin: 0;
+  padding: 0.75rem 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.next-available-button {
+  margin-top: 1rem;
+}
+
+.next-available-button[hidden] {
+  display: none;
+}
+
+.booking-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 240px;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+}
+
+.detail-card {
+  min-width: 0;
+  height: 100%;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.detail-card h2 {
+  margin: 0 0 0.5rem;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 750;
+}
+
+.detail-card p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.your-call-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.your-call-card .selection-summary {
+  min-height: 4.5rem;
+  margin: 0 0 0.5rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.continue-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: auto;
+}
+
+.continue-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 860px) {
+  .booking-board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .booking-details-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-auto-rows: 240px;
+  }
+
+}
+
+@media (max-width: 520px) {
+  .booking-page {
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+  }
+
+  .calendar-area,
+  .timeline-area {
+    padding: 1rem;
+  }
+
+  .detail-card {
+    padding: 1rem;
+  }
+
+  .calendar-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) minmax(1.7rem, 0.4fr) minmax(1.7rem, 0.4fr);
+    gap: 0.18rem;
+  }
+
+  .calendar-weekday {
+    padding-inline: 0;
+    font-size: 0.72rem;
+  }
+
+  .calendar-weekday.is-weekend {
+    font-size: 0.58rem;
+  }
+
+  .calendar-day {
+    min-height: 4rem;
+    padding: 0.28rem;
+  }
+
+  .calendar-day.is-weekend {
+    padding-inline: 0;
+  }
+
+  .holiday-stamp {
+    max-width: 100%;
+    font-size: 0.53rem;
+  }
+
+  .continue-button {
+    width: 100%;
+  }
+}
+
+.guide-backdrop[hidden] {
+  display: none;
+}
+
+.guide-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--text) 72%, transparent);
+}
+
+.guide-dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(760px, 100%);
+  max-height: min(850px, calc(100vh - 2.5rem));
+  max-height: min(850px, calc(100dvh - 2.5rem));
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1rem 3rem color-mix(in srgb, var(--text) 32%, transparent);
+}
+
+.guide-header,
+.guide-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem clamp(1rem, 3vw, 1.5rem);
+  border-bottom: 1px solid var(--border);
+}
+
+.guide-header h2 {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1.25rem, 4vw, 1.6rem);
+}
+
+.guide-progress {
+  margin: 0 0 0.25rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.guide-close {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.guide-content {
+  min-height: 0;
+  padding: 1rem clamp(1rem, 3vw, 1.5rem);
+  overflow-y: auto;
+}
+
+.guide-screenshot {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.guide-screenshot-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.guide-screenshot-fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.guide-highlight-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.guide-highlight {
+  position: absolute;
+  border: 3px solid #fecaca;
+  border-radius: 6px;
+  box-shadow: 0 0 0 999px color-mix(in srgb, var(--text) 22%, transparent);
+}
+
+.guide-callout {
+  position: absolute;
+  top: -0.8rem;
+  left: -0.8rem;
+  display: grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  place-items: center;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: #fecaca;
+  color: var(--surface);
+  font-size: 0.85rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.guide-arrow {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  overflow: visible;
+  color: #fecaca;
+}
+
+.guide-arrow line,
+.guide-arrow path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 5;
+}
+
+.guide-descriptions {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guide-descriptions li {
+  display: grid;
+  grid-template-columns: 1.8rem minmax(0, 1fr);
+  align-items: start;
+  gap: 0.65rem;
+  color: var(--text);
+}
+
+.guide-description-number {
+  display: grid;
+  width: 1.7rem;
+  height: 1.7rem;
+  place-items: center;
+  border: 2px solid #fecaca;
+  border-radius: 50%;
+  color: #fecaca;
+  font-weight: 800;
+}
+
+.guide-descriptions p {
+  margin: 0.1rem 0 0;
+}
+
+.guide-step-nav {
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+.guide-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.guide-dot {
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.guide-dot[aria-current="step"] {
+  border-color: var(--accent);
+  background: var(--btn);
+}
+
+.guide-progress-bottom {
+  margin: 0;
+}
+
+.guide-controls {
+  border-top: 1px solid var(--border);
+  border-bottom: 0;
+}
+
+.guide-controls .btn {
+  min-width: 110px;
+}
+
+html.guide-open,
+html.guide-open body {
+  overflow: hidden;
+}
+
+html[data-theme="light"] .guide-highlight,
+html[data-theme="light"] .guide-description-number {
+  border-color: #dc2626;
+}
+
+html[data-theme="light"] .guide-arrow {
+  color: #dc2626;
+}
+
+html[data-theme="light"] .guide-callout {
+  background: #dc2626;
+}
+
+html[data-theme="brand"] .month-holidays li.is-holiday,
+html[data-theme="brand"] .calendar-day.is-holiday,
+html[data-theme="dark"] .month-holidays li.is-holiday,
+html[data-theme="dark"] .calendar-day.is-holiday {
+  color: #fecaca;
+  border-color: #fecaca;
+}
+
+html[data-theme="light"] .month-holidays li.is-holiday,
+html[data-theme="light"] .calendar-day.is-holiday,
+html[data-theme="light"] .calendar-day.is-holiday.is-selected {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+@media (max-width: 520px) {
+  .guide-backdrop {
+    padding: 0;
+  }
+
+  .guide-dialog {
+    width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    min-height: 100%;
+    border-radius: 0;
+  }
+
+  .guide-dots {
+    gap: 0.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-day,
+  .time-slot,
+  .timeline-area,
+  .guide-dialog {
+    transition: none;
+  }
+}

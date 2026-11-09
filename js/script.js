@@ -115,6 +115,9 @@
   var form = document.getElementById("contactForm");
   var message = document.getElementById("formMessage");
   var submitBtn = document.getElementById("submitBtn");
+  var callSummary = document.getElementById("callBookingSummary");
+  var callDateField = document.getElementById("callDate");
+  var callTimeField = document.getElementById("callTime");
 
   window.__applyTheme = applyTheme;
   window.__cycleTheme = cycleTheme;
@@ -145,6 +148,9 @@
       if (errors[key]) {
         errors[key].textContent = "";
       }
+      if (fields[key]) {
+        fields[key].setAttribute("aria-invalid", "false");
+      }
     });
     if (message) {
       message.style.display = "none";
@@ -153,43 +159,260 @@
     }
   }
 
+  function clearFormMessage() {
+    if (!message) return;
+    message.style.display = "none";
+    message.textContent = "";
+    message.className = "form-message";
+  }
+
   function showError(key, text) {
     if (errors[key]) {
       errors[key].textContent = text;
     }
+    if (fields[key]) {
+      fields[key].setAttribute("aria-invalid", "true");
+    }
   }
 
-  function showMessage(text, type) {
+  function clearFieldError(key) {
+    if (errors[key]) {
+      errors[key].textContent = "";
+    }
+    if (fields[key]) {
+      fields[key].setAttribute("aria-invalid", "false");
+    }
+  }
+
+  function validateName(value) {
+    var nameRe = /^[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ.'-]*(?: [A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ.'-]*)*,\s*[A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ'-]*(?: [A-Za-zÀ-ÖØ-öø-ÿ][A-Za-zÀ-ÖØ-öø-ÿ'-]*)*(?:\s+[A-Za-z]\.)?$/;
+    if (!value) {
+      return "Please enter your name as Lastname, Firstname M.I. (for example, Dela Cruz, Juan P.).";
+    }
+    if (!nameRe.test(value)) {
+      return "Use Lastname, Firstname M.I. format (for example, Dela Cruz, Juan P.). The middle initial is optional.";
+    }
+    return "";
+  }
+
+  function validateEmail(value) {
+    if (!value) {
+      return "Please enter your email address.";
+    }
+    if (value.length > 254) {
+      return "Email addresses must be 254 characters or fewer.";
+    }
+    if (/\s/.test(value)) {
+      return "Email addresses cannot contain spaces.";
+    }
+    if (value.indexOf("@") === -1) {
+      return "Please include an @ symbol, like juan@your-school.edu.ph.";
+    }
+    if (value.indexOf("@") !== value.lastIndexOf("@")) {
+      return "Please use only one @ symbol in your email address.";
+    }
+    if (value.indexOf("..") !== -1) {
+      return "Email addresses cannot contain two dots in a row.";
+    }
+
+    var parts = value.split("@");
+    var local = parts[0];
+    var domain = parts[1];
+    var localRe = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
+    if (!local || local.length > 64 || local.charAt(0) === "." || local.charAt(local.length - 1) === "." || !localRe.test(local)) {
+      return "Please check the part of your email address before @.";
+    }
+    if (!domain) {
+      return "Please enter a domain after @, like your-school.edu.ph.";
+    }
+    if (domain.indexOf(".") === -1) {
+      return "Your email domain needs an ending, such as .com or .edu.ph.";
+    }
+
+    var domainRe = /^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
+    if (!domainRe.test(domain)) {
+      return "Please enter a valid domain, such as your-school.edu.ph.";
+    }
+
+    var blockedDomains = ["mailinator.com", "tempmail.com", "example.com"];
+    var isBlockedDomain = blockedDomains.some(function (blockedDomain) {
+      return domain === blockedDomain || domain.slice(-(blockedDomain.length + 1)) === "." + blockedDomain;
+    });
+    if (isBlockedDomain) {
+      return "Please use a school or personal email address, not a temporary or example address.";
+    }
+    return "";
+  }
+
+  function showMessage(text, type, showCalendarLink) {
     if (!message) {
       return;
     }
-    message.textContent = text;
+    message.replaceChildren(document.createTextNode(text));
+    if (type === "error" && showCalendarLink) {
+      var link = document.createElement("a");
+      link.href = "book-a-call.html";
+      link.textContent = "Choose another date and time.";
+      message.appendChild(document.createTextNode(" "));
+      message.appendChild(link);
+    }
     message.className = "form-message " + (type === "error" ? "error" : "success");
     message.style.display = "block";
+  }
+
+  function showCallDateError() {
+    showMessage("That call date or time is no longer available.", "error", true);
+  }
+
+  var callBooking = { date: "", time: "" };
+  var callTimeOptions = ["9:00 AM", "10:00 AM", "11:00 AM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
+  var fixedCallHolidays = ["01-01", "04-09", "05-01", "06-12", "08-21", "11-01", "11-30", "12-08", "12-24", "12-25", "12-30", "12-31"];
+
+  function parseCallDate(value) {
+    var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
+    if (!match) return null;
+    var year = Number(match[1]);
+    var month = Number(match[2]);
+    var day = Number(match[3]);
+    var date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() + 1 !== month || date.getUTCDate() !== day) return null;
+    return { year: year, month: month, day: day, date: date };
+  }
+
+  function manilaDateKey() {
+    var parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Manila",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(new Date());
+    var values = {};
+    parts.forEach(function (part) {
+      if (part.type !== "literal") values[part.type] = part.value;
+    });
+    return values.year + "-" + values.month + "-" + values.day;
+  }
+
+  function renderCallBooking() {
+    if (!callSummary || !callDateField || !callTimeField) return;
+    var parsed = parseCallDate(callBooking.date);
+    if (!parsed || callTimeOptions.indexOf(callBooking.time) === -1) {
+      callBooking = { date: "", time: "" };
+      callDateField.value = "";
+      callTimeField.value = "";
+      callSummary.hidden = true;
+      return;
+    }
+
+    callDateField.value = callBooking.date;
+    callTimeField.value = callBooking.time;
+    callSummary.replaceChildren(document.createTextNode(
+      "Your call: " + new Intl.DateTimeFormat("en-PH", {
+        timeZone: "UTC",
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }).format(new Date(Date.UTC(parsed.year, parsed.month - 1, parsed.day, 12))) +
+      " at " + callBooking.time + " (Philippine time) "
+    ));
+    var changeLink = document.createElement("a");
+    changeLink.href = "book-a-call.html";
+    changeLink.textContent = "Change";
+    callSummary.appendChild(changeLink);
+    callSummary.hidden = false;
+  }
+
+  function loadCallBooking() {
+    var storedDate = "";
+    var storedTime = "";
+    try {
+      storedDate = sessionStorage.getItem("anthrix-call-date") || "";
+      storedTime = sessionStorage.getItem("anthrix-call-time") || "";
+    } catch (error) {
+      console.warn("Could not read the saved call selection.", error);
+    }
+
+    var query = new URLSearchParams(window.location.search);
+    var queryDate = query.get("call_date");
+    var queryTime = query.get("call_time");
+    if (queryDate && queryTime) {
+      storedDate = queryDate;
+      storedTime = queryTime;
+    }
+    callBooking = { date: storedDate, time: storedTime };
+    renderCallBooking();
+  }
+
+  async function isCallBookingValid() {
+    if (!callBooking.date && !callBooking.time) return true;
+    var parsed = parseCallDate(callBooking.date);
+    if (!parsed || callTimeOptions.indexOf(callBooking.time) === -1) return false;
+    if (parsed.date.getUTCDay() === 0 || parsed.date.getUTCDay() === 6) return false;
+    if (callBooking.date < manilaDateKey()) return false;
+
+    var holidayDates;
+    try {
+      var response = await fetch("https://date.nager.at/api/v3/PublicHolidays/" + parsed.year + "/PH");
+      if (!response.ok) throw new Error("Holiday service returned " + response.status);
+      var holidays = await response.json();
+      if (!Array.isArray(holidays)) throw new Error("Holiday service returned an unexpected response");
+      holidayDates = holidays.map(function (holiday) { return holiday && holiday.date; });
+    } catch (error) {
+      console.warn("Could not verify live Philippine holidays; using fixed-date holidays.", error);
+      holidayDates = fixedCallHolidays.map(function (monthDay) { return parsed.year + "-" + monthDay; });
+    }
+    return holidayDates.indexOf(callBooking.date) === -1;
+  }
+
+  function clearCallBooking() {
+    callBooking = { date: "", time: "" };
+    try {
+      sessionStorage.removeItem("anthrix-call-date");
+      sessionStorage.removeItem("anthrix-call-time");
+    } catch (error) {
+      console.warn("Could not clear the saved call selection.", error);
+    }
+    if (callDateField) callDateField.value = "";
+    if (callTimeField) callTimeField.value = "";
+    if (callSummary) callSummary.hidden = true;
+    if (window.location.search) {
+      try {
+        window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+      } catch (error) {
+        console.warn("Could not remove the call selection from the page URL.", error);
+      }
+    }
   }
 
   function validate() {
     clearErrors();
     var ok = true;
 
-    if (!fields.name || fields.name.value.trim().length < 2) {
-      showError("name", "Please enter your name (at least 2 characters).");
+    if (fields.name) {
+      fields.name.value = fields.name.value.trim();
+      var nameError = validateName(fields.name.value);
+      if (nameError) {
+        showError("name", nameError);
+        ok = false;
+      }
+    } else {
       ok = false;
     }
 
-    var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!fields.email || !emailRe.test(fields.email.value.trim())) {
-      showError("email", "Please enter a valid email address.");
+    if (fields.email) {
+      fields.email.value = fields.email.value.trim().toLowerCase();
+      var emailError = validateEmail(fields.email.value);
+      if (emailError) {
+        showError("email", emailError);
+        ok = false;
+      }
+    } else {
       ok = false;
     }
 
-    if (!fields.project || fields.project.value.trim().length === 0) {
-      showError("project", "Please tell us about your project.");
-      ok = false;
-    }
-
-    if (fields.budget && fields.budget.value && fields.budget.value.trim() === "") {
-      showError("budget", "Please select a budget range.");
+    if (!fields.project || !fields.project.value) {
+      showError("project", "Please select the type of project you need.");
       ok = false;
     }
 
@@ -206,6 +429,35 @@
     return ok;
   }
 
+  if (fields.name) {
+    fields.name.addEventListener("blur", function () {
+      fields.name.value = fields.name.value.trim();
+      var error = validateName(fields.name.value);
+      if (error) {
+        showError("name", error);
+      } else {
+        clearFieldError("name");
+      }
+    });
+  }
+
+  if (fields.email) {
+    fields.email.addEventListener("blur", function () {
+      fields.email.value = fields.email.value.trim().toLowerCase();
+      var error = validateEmail(fields.email.value);
+      if (error) {
+        showError("email", error);
+      } else {
+        clearFieldError("email");
+      }
+    });
+  }
+
+  loadCallBooking();
+
+  var submissionInProgress = false;
+  var successfulSubmission = false;
+
   function setSubmitting(isSubmitting) {
     if (!submitBtn) {
       return;
@@ -214,8 +466,22 @@
     submitBtn.textContent = isSubmitting ? "Sending..." : "Send message";
   }
 
-  form.addEventListener("submit", function (event) {
+  form.addEventListener("input", function (event) {
+    if (!successfulSubmission || !event.target.matches("input, select, textarea")) return;
+    successfulSubmission = false;
+    clearFormMessage();
+    setSubmitting(false);
+  });
+  form.addEventListener("change", function (event) {
+    if (!successfulSubmission || !event.target.matches("input, select, textarea")) return;
+    successfulSubmission = false;
+    clearFormMessage();
+    setSubmitting(false);
+  });
+
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
+    if (submissionInProgress || successfulSubmission) return;
     clearErrors();
 
     if (!validate()) {
@@ -223,36 +489,79 @@
       return;
     }
 
+    submissionInProgress = true;
     setSubmitting(true);
+    try {
+      if (!(await isCallBookingValid())) {
+        showCallDateError();
+        return;
+      }
 
-    var endpoint = form.getAttribute("action") || "https://formspree.io/f/mqppoldb";
+      var endpoint = form.getAttribute("action") || "https://formspree.io/f/mqppoldb";
+      var data = new FormData();
+      data.append("name", fields.name.value.trim());
+      data.append("email", fields.email.value.trim());
+      data.append("project", fields.project.value.trim());
+      if (fields.budget) data.append("budget", fields.budget.value);
+      if (fields.timeline) data.append("timeline", fields.timeline.value);
+      data.append("building", fields.building.value.trim());
+      if (callBooking.date && callBooking.time) {
+        data.append("call_date", callBooking.date);
+        data.append("call_time", callBooking.time);
+      }
 
-    // Formspree expects URL-encoded form data, not JSON
-    var data = new FormData();
-    data.append("name", fields.name.value.trim());
-    data.append("email", fields.email.value.trim());
-    data.append("project", fields.project.value.trim());
-    if (fields.budget) data.append("budget", fields.budget.value);
-    if (fields.timeline) data.append("timeline", fields.timeline.value);
-    data.append("building", fields.building.value.trim());
+      var response;
+      try {
+        response = await fetch(endpoint, {
+          method: "POST",
+          body: data,
+          headers: { Accept: "application/json" },
+        });
+      } catch (error) {
+        showMessage("No connection. Please check your internet and try again.", "error");
+        return;
+      }
 
-    fetch(endpoint, {
-      method: "POST",
-      body: data,
-    })
-      .then(function (response) {
-        setSubmitting(false);
-        if (response.ok) {
-          form.reset();
-          showMessage("Thanks! We've received your message and will be in touch soon.", "success");
+      if (!response.ok) {
+        var errorMessage;
+        if (response.status === 404) {
+          errorMessage = "The contact form could not be found (404). Please email us directly at anthonyojera02@gmail.com.";
+        } else if (response.status === 403) {
+          errorMessage = "This request was blocked or is not allowed (403). Please email us directly at anthonyojera02@gmail.com.";
+        } else if (response.status === 429) {
+          errorMessage = "Too many requests. Please wait a moment and try again.";
         } else {
-          throw new Error("Submission failed");
+          errorMessage = "Something went wrong (HTTP " + response.status +
+            "). Please try again or email us directly at anthonyojera02@gmail.com.";
         }
-      })
-      .catch(function () {
-        setSubmitting(false);
-        showMessage("Something went wrong. Please try again or email us directly at hello@anthrix.example.", "error");
-      });
+        showMessage(errorMessage, "error");
+        return;
+      }
+
+      successfulSubmission = true;
+      try {
+        form.reset();
+      } catch (error) {
+        console.warn("The contact form could not be reset after a successful send.", error);
+      }
+      try {
+        clearCallBooking();
+      } catch (error) {
+        console.warn("The saved call selection could not be cleared after a successful send.", error);
+      }
+      try {
+        showMessage("Thanks! We've received your message and will be in touch soon.", "success");
+      } catch (error) {
+        console.warn("The success message could not be displayed.", error);
+      }
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sent";
+      }
+    } finally {
+      submissionInProgress = false;
+      if (!successfulSubmission) setSubmitting(false);
+    }
   });
 
   // ============================================================

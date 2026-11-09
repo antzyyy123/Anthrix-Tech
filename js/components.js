@@ -20,6 +20,16 @@
 
   function setActiveNav() {
     var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+    var navLinks = document.querySelector(".nav-links");
+    if (navLinks && !navLinks.querySelector('[data-nav="book-a-call.html"]')) {
+      var item = document.createElement("li");
+      var link = document.createElement("a");
+      link.href = "book-a-call.html";
+      link.dataset.nav = "book-a-call.html";
+      link.textContent = "Book a call";
+      item.appendChild(link);
+      navLinks.appendChild(item);
+    }
     document.querySelectorAll(".nav-links a[data-nav], .nav-link-book[data-nav]").forEach(function (a) {
       a.classList.toggle("active", (a.getAttribute("data-nav") || "").toLowerCase() === file);
     });
@@ -35,7 +45,7 @@
           '<a class="bubble bubble-item" href="services.html#solution" aria-label="Solution" data-section="solution" tabindex="-1"></a>' +
           '<a class="bubble bubble-item" href="work.html#work" aria-label="Work" data-section="work" tabindex="-1"></a>' +
           '<a class="bubble bubble-item" href="contact.html#contact" aria-label="Contact" data-section="contact" tabindex="-1"></a>' +
-          '<a class="bubble bubble-item" href="contact.html#contact" aria-label="Book a call" data-section="book-a-call" tabindex="-1"></a>' +
+          '<a class="bubble bubble-item" href="book-a-call.html" aria-label="Book a call" data-section="book-a-call" tabindex="-1"></a>' +
         '</div>' +
       '</div>');
   }

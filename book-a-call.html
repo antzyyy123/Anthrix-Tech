@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="brand">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Book a call | Anthrix Tech</title>
+  <link rel="icon" href="images/favicon.ico" sizes="any">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("theme");
+        document.documentElement.setAttribute("data-theme",
+          saved && ["brand", "dark", "light"].indexOf(saved) !== -1 ? saved : "brand");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "brand");
+      }
+    })();
+  </script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/bubble-nav.css">
+  <link rel="stylesheet" href="css/book-a-call.css">
+</head>
+<body>
+  <div data-component="top-nav"></div>
+  <main>
+    <section class="booking-page" id="book-a-call" aria-labelledby="bookingTitle">
+      <div class="container booking-container">
+        <a class="booking-back" href="contact.html#contact">&larr; Back to contact</a>
+        <header class="booking-header">
+          <h1 id="bookingTitle">When works for you?</h1>
+          <p>Pick a weekday and time for a one-hour chat about your capstone, thesis system, or business idea.</p>
+          <p class="manila-clock" id="philippineClock" aria-live="off"></p>
+        </header>
+
+        <div class="booking-board">
+          <section class="calendar-area" aria-labelledby="calendarHeading">
+            <div class="month-heading">
+              <button class="month-nav" id="previousMonth" type="button" aria-label="Previous month">&larr;</button>
+              <h2 id="calendarHeading" aria-live="polite"></h2>
+              <button class="month-nav" id="nextMonth" type="button" aria-label="Next month">&rarr;</button>
+            </div>
+            <div class="calendar-tools">
+              <p class="month-summary" id="monthSummary" aria-live="polite"></p>
+              <button class="text-button" id="todayButton" type="button">Today</button>
+            </div>
+            <div class="holiday-notice-slot">
+              <p class="holiday-notice" id="holidayNotice" role="status" hidden></p>
+            </div>
+            <div class="calendar-grid" id="calendarGrid" role="group" aria-label="Choose a date" aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown PageUp PageDown" tabindex="-1"></div>
+            <section class="month-holidays" aria-labelledby="holidayHeading">
+              <h3 id="holidayHeading">Philippine holidays this month</h3>
+              <ul id="holidayList"></ul>
+            </section>
+          </section>
+
+          <section class="timeline-area is-idle" id="timelineArea" aria-labelledby="timelineHeading">
+            <h2 id="timelineHeading">Choose a time</h2>
+            <p class="timeline-prompt" id="timelinePrompt">Pick a day to see open times.</p>
+            <p class="timeline-date" id="timelineDate"></p>
+            <div class="timeline" id="timeLine" role="group" aria-label="Available one-hour start times"></div>
+            <button class="text-button next-available-button" id="nextAvailableButton" type="button">Next available time</button>
+          </section>
+        </div>
+
+        <div class="booking-details-grid">
+          <section class="detail-card your-call-card" aria-labelledby="yourCallHeading">
+            <h2 id="yourCallHeading">Your call</h2>
+            <p class="selection-summary" id="bookingSummary" aria-live="polite">Choose a date and time to continue.</p>
+            <button class="btn btn-primary continue-button" id="continueBooking" type="button" disabled>Continue to contact form</button>
+          </section>
+
+          <section class="detail-card before-call-card" aria-labelledby="beforeCallHeading">
+            <h2 id="beforeCallHeading">Before the call</h2>
+            <p>Think about what you want to build, even if it is just an early idea.</p>
+            <p>Bring any rough feature ideas or examples you have in mind.</p>
+            <p>It helps to know your deadline and budget range, if you have one.</p>
+          </section>
+
+          <section class="detail-card how-to-book-card" aria-labelledby="howToBookHeading">
+            <h2 id="howToBookHeading">How to book</h2>
+            <p>Choose an open weekday and time, then continue to the contact form to send your request.</p>
+            <button class="text-button" id="openGuide" type="button">Open the guide</button>
+          </section>
+
+          <section class="detail-card good-to-know-card" aria-labelledby="goodToKnowHeading">
+            <h2 id="goodToKnowHeading">Good to know</h2>
+            <p>Calls run Monday to Friday, 9 AM to 5 PM Philippine time.</p>
+            <p>We are closed on holidays.</p>
+            <p>Each call takes one hour.</p>
+            <p>We will confirm by email after you send the contact form.</p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="guide-backdrop" id="guideBackdrop" hidden>
+    <section class="guide-dialog" id="guideDialog" role="dialog" aria-modal="true" aria-labelledby="guideStepTitle" tabindex="-1">
+      <header class="guide-header">
+        <div>
+          <p class="guide-progress" id="guideProgress" aria-live="polite">Step 1 of 7</p>
+          <h2 id="guideStepTitle" tabindex="-1">Pick a work day</h2>
+        </div>
+        <button class="guide-close" id="closeGuide" type="button" aria-label="Close guide">&times;</button>
+      </header>
+
+      <div class="guide-content">
+        <figure class="guide-screenshot">
+          <img
+            class="guide-screenshot-image"
+            id="guideScreenshot"
+            src="images/manual/step-1.png"
+            alt="November 2026 booking calendar with weekday dates and month navigation"
+            draggable="false">
+          <div class="guide-screenshot-fallback" id="guideScreenshotFallback" hidden>Screenshot coming</div>
+          <div class="guide-highlight-layer" id="guideHighlightLayer" aria-hidden="true"></div>
+        </figure>
+        <ol class="guide-descriptions" id="guideDescriptions" aria-label="What to do on this step"></ol>
+        <nav class="guide-step-nav" aria-label="Guide steps">
+          <div class="guide-dots" id="guideDots"></div>
+          <p class="guide-progress guide-progress-bottom" id="guideProgressBottom">Step 1 of 7</p>
+        </nav>
+      </div>
+
+      <footer class="guide-controls">
+        <button class="text-button" id="guideBack" type="button" disabled>Back</button>
+        <button class="btn btn-primary" id="guideNext" type="button">Next</button>
+      </footer>
+    </section>
+  </div>
+
+  <div data-component="footer"></div>
+  <script src="js/components.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/book-a-call.js"></script>
+  <script src="js/bubble-nav.js" defer></script>
+</body>
+</html>
