@@ -14,7 +14,7 @@ html {
   text-size-adjust: 100%;
   scroll-behavior: smooth;
   scroll-padding-top: var(--nav-height);
-  --nav-height: 76px;
+  --nav-height: 64px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -220,14 +220,14 @@ html[data-theme="light"] .site-nav {
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 20px;
   flex: 1 1 auto;
   min-width: 0;
 }
 
 .nav-links {
   display: flex;
-  gap: 22px;
+  gap: 20px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -253,7 +253,7 @@ html[data-theme="light"] .site-nav {
 .nav-links li a::after {
   content: "";
   position: absolute;
-  bottom: -2px;
+  bottom: -1px;
   left: 50%;
   width: 0;
   height: 2px;
@@ -385,12 +385,18 @@ html[data-theme="light"] .site-nav {
 
 /* Tablet: tighten spacing so the full top nav fits */
 @media (min-width: 768px) and (max-width: 1179px) {
-  .nav-links { gap: clamp(8px, 1.4vw, 16px); }
-  .nav-links li a { font-size: clamp(0.82rem, 1vw, 0.95rem); }
+  .nav-links { gap: 20px; }
+  .nav-links li a { font-size: 15px; }
 }
 
 /* Narrow tablet: drop the CTA button so nothing overflows */
 @media (min-width: 768px) and (max-width: 1023px) {
+  html {
+    --nav-height: 56px;
+  }
+  .site-nav {
+    height: var(--nav-height);
+  }
   .btn-touch--desktop { display: none; }
 }
 
@@ -1166,17 +1172,33 @@ html[data-theme="light"] .site-nav {
   align-items: center;
   min-width: 0;
   min-height: 44px;
+  font-size: 15px;
 }
 
-/* Theme switcher: buttons must fit inside the 36px pill */
+/* Theme switcher: buttons must fit inside the 32px desktop pill */
 .site-nav .theme-segmented {
   align-items: center;
 }
 .site-nav .theme-option {
-  width: 28px;
-  height: 28px;
   min-width: 0;
   min-height: 0;
+}
+
+@media (min-width: 768px) {
+  .site-nav .logo {
+    height: 34px;
+  }
+  .site-nav .brand-name {
+    font-size: 18px;
+  }
+  .site-nav .theme-segmented {
+    height: 32px;
+    padding: 0.1rem;
+  }
+  .site-nav .theme-option {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 /* "Get in touch" is a pill button whatever class the HTML gives it,
@@ -1188,9 +1210,9 @@ html[data-theme="light"] .site-nav {
   gap: 0.4rem;
   flex-shrink: 0;
   margin-left: auto;
-  padding: 0.7rem 1.25rem;
-  min-height: 44px;
-  font-size: 0.95rem;
+  padding: 8px 18px;
+  min-height: 40px;
+  font-size: 15px;
   font-weight: 600;
   background: var(--btn);
   color: var(--on-btn);
