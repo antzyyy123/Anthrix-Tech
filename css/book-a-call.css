@@ -737,6 +737,56 @@ html[data-theme="light"] .calendar-day.is-holiday.is-selected {
   border-color: #dc2626;
 }
 
+html[data-theme="brand"] .guide-backdrop {
+  background: rgb(from var(--surface) r g b / 0.72);
+}
+
+html[data-theme="brand"] .guide-dialog,
+html[data-theme="brand"] .guide-header,
+html[data-theme="brand"] .guide-controls,
+html[data-theme="brand"] .guide-screenshot,
+html[data-theme="brand"] .guide-screenshot-fallback {
+  background: rgb(from var(--surface) r g b / 1);
+}
+
+html[data-theme="brand"] .guide-dialog {
+  box-shadow: 0 1rem 3rem rgb(from var(--surface) r g b / 0.8);
+}
+
+html[data-theme="brand"] .guide-close,
+html[data-theme="brand"] .guide-controls #guideBack,
+html[data-theme="brand"] .guide-controls #guideNext {
+  border: 1px solid var(--text);
+  background: rgb(from var(--surface) r g b / 1);
+  color: var(--text);
+  opacity: 1;
+}
+
+html[data-theme="brand"] .guide-controls #guideNext {
+  background: var(--on-btn);
+}
+
+html[data-theme="brand"] .guide-highlight {
+  border: 3px solid #dc2626;
+  box-shadow: 0 0 0 2px var(--text);
+}
+
+html[data-theme="brand"] .guide-callout,
+html[data-theme="brand"] .guide-description-number {
+  border: 2px solid var(--text);
+  background: #dc2626;
+  color: var(--text);
+}
+
+html[data-theme="brand"] .guide-arrow {
+  color: #dc2626;
+}
+
+html[data-theme="brand"] .guide-arrow line,
+html[data-theme="brand"] .guide-arrow path {
+  stroke-width: 7;
+}
+
 @media (max-width: 520px) {
   .guide-backdrop {
     padding: 0;

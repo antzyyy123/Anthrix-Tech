@@ -35,6 +35,15 @@
     });
   }
 
+  function updateFooterDetails() {
+    var year = document.querySelector("[data-footer-year]");
+    if (year) year.textContent = String(new Date().getFullYear());
+
+    var location = document.querySelector("[data-footer-location]");
+    var locationPill = document.querySelector("[data-footer-location-pill]");
+    if (location && locationPill) locationPill.textContent = location.textContent.trim();
+  }
+
   function injectBubbleNav() {
     if (!document.querySelector('[data-component="top-nav"], .site-nav') || document.getElementById("bubbleNav")) return;
     document.body.insertAdjacentHTML("beforeend",
@@ -58,6 +67,7 @@
       loadComponent('[data-component="footer"]', "components/footer.html"),
     ]).then(function () {
       setActiveNav();
+      updateFooterDetails();
       document.dispatchEvent(new CustomEvent("components:ready"));
     });
   }
