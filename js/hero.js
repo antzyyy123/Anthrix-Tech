@@ -538,3 +538,48 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
+
+(function () {
+  var els = document.querySelectorAll("[data-count-to]");
+  if (!els.length) return;
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function run(el) {
+    var end = parseFloat(el.dataset.countTo);
+    var dec = parseInt(el.dataset.decimals || "0", 10);
+    if (reduce) { el.textContent = end.toFixed(dec); return; }
+    var start = performance.now(), dur = 1200;
+    (function tick(now) {
+      var t = Math.min((now - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = (end * eased).toFixed(dec);
+      if (t < 1) requestAnimationFrame(tick);
+    })(start);
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { run(e.target); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.6 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+
+(function () {
+  document.querySelectorAll("[data-stars]").forEach(function (box) {
+    var src = box.closest(".hero-stat").querySelector("[data-count-to]");
+    var rating = parseFloat(src ? src.dataset.countTo : box.dataset.stars) || 0;
+
+    box.innerHTML = "";
+    for (var i = 0; i < 5; i++) {
+      var fill = Math.max(0, Math.min(1, rating - i));
+      var star = document.createElement("span");
+      star.className = "star";
+      star.setAttribute("aria-hidden", "true");
+      star.textContent = "★";
+      star.style.setProperty("--fill", fill);
+      box.appendChild(star);
+    }
+    box.setAttribute("aria-label", "Rated " + rating + " out of 5");
+  });
+})();
