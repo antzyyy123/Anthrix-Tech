@@ -9,7 +9,7 @@
       client: "Iloilo City Public Library (Dr. Graciano Lopez Jaena Learning Resource Center and Museum)",
       problem: "Library records and borrowing were handled manually.",
       built: "A web-based library management system for managing books, members and borrowing, with a public catalog.",
-      result: "[Add real result]",
+      result: "Staff manage books, members and borrowing in one system, and visitors can search the catalog online.",
       tools: ["Flask", "MySQL", "HTML", "CSS", "JavaScript", "Bootstrap", "androidStudio", "node.js", "blender", "jinja2", "tailwindcss"],
     },
     {
@@ -19,7 +19,7 @@
       client: "A local sari-sari store",
       problem: "Sales, stock, expenses and customer credit were tracked by hand.",
       built: "Automated Google Sheets with a store dashboard covering sales, inventory, restock alerts, expenses, customer credit and payments.",
-      result: "[Add real result]",
+      result: "Sales, stock, expenses and customer credit update in one dashboard, with alerts for items to restock and a list of who still owes.",
       tools: ["Google Sheets", "Apps Script", "HTML", "CSS", "JavaScript"],
     },
   ];
