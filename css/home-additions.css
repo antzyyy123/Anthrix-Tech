@@ -1,0 +1,645 @@
+/* ============================================================
+   HOMEPAGE ADDITIONS — open call, process, projects, and tools
+   ============================================================ */
+.hero .next-open-call-card {
+  --next-open-success-ink: #10B981;
+  --next-open-danger-ink: #F87171;
+  position: absolute;
+  z-index: 1;
+  top: clamp(12px, 2vw, 24px);
+  right: clamp(12px, 2vw, 24px);
+  display: grid;
+  gap: 4px;
+  box-sizing: border-box;
+  width: clamp(170px, 14vw, 200px);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: color-mix(in srgb, rgb(from var(--surface) r g b / 1) 96%, var(--muted) 4%);
+  color: var(--text);
+  line-height: 1.35;
+  text-align: left;
+}
+
+html[data-theme="light"] .hero .next-open-call-card {
+  --next-open-success-ink: #047857;
+  --next-open-danger-ink: #B91C1C;
+}
+
+html[data-theme="brand"] .hero .next-open-call-card {
+  --next-open-brand-surface: color-mix(in srgb, var(--hero-glow-b) 88%, var(--surface) 12%);
+  border-color: color-mix(in srgb, var(--text) 35%, transparent);
+  background: var(--next-open-brand-surface);
+  color: var(--text);
+}
+
+.hero .next-open-call-card p {
+  margin: 0;
+}
+
+.hero .next-open-call-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.hero .next-open-call-card.is-open {
+  border-color: color-mix(in srgb, var(--next-open-success-ink) 45%, var(--border));
+  background: color-mix(in srgb, rgb(from var(--surface) r g b / 1) 91%, var(--next-open-success-ink) 9%);
+}
+
+.hero .next-open-call-card.is-closed {
+  border-color: color-mix(in srgb, var(--next-open-danger-ink) 45%, var(--border));
+  background: color-mix(in srgb, rgb(from var(--surface) r g b / 1) 91%, var(--next-open-danger-ink) 9%);
+}
+
+.hero .next-open-call-card.is-neutral {
+  border-color: color-mix(in srgb, var(--muted) 35%, var(--border));
+}
+
+html[data-theme="brand"] .hero .next-open-call-card.is-open {
+  border-color: color-mix(in srgb, var(--next-open-success-ink) 40%, transparent);
+  background: color-mix(in srgb, var(--next-open-brand-surface) 84%, var(--next-open-success-ink) 16%);
+}
+
+html[data-theme="brand"] .hero .next-open-call-card.is-closed {
+  border-color: color-mix(in srgb, var(--next-open-danger-ink) 40%, transparent);
+  background: color-mix(in srgb, var(--next-open-brand-surface) 84%, var(--next-open-danger-ink) 16%);
+}
+
+html[data-theme="brand"] .hero .next-open-call-card.is-neutral {
+  border-color: color-mix(in srgb, var(--text) 35%, transparent);
+  background: var(--next-open-brand-surface);
+}
+
+html[data-theme="brand"] .hero .next-open-call-date,
+html[data-theme="brand"] .hero .next-open-call-reason {
+  color: var(--text);
+}
+
+.hero .next-open-call-status.is-neutral {
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.hero .next-open-call-status-dot {
+  flex: 0 0 7px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.hero .next-open-call-card.is-open .next-open-call-status {
+  color: var(--next-open-success-ink);
+}
+
+.hero .next-open-call-card.is-closed .next-open-call-status {
+  color: var(--next-open-danger-ink);
+}
+
+html[data-theme="brand"] .hero .next-open-call-status.is-open,
+html[data-theme="brand"] .hero .next-open-call-status.is-closed,
+html[data-theme="brand"] .hero .next-open-call-status.is-neutral {
+  color: var(--text);
+}
+
+html[data-theme="brand"] .hero .next-open-call-card.is-open .next-open-call-status-dot {
+  color: var(--next-open-success-ink);
+}
+
+html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-status-dot {
+  color: var(--next-open-danger-ink);
+}
+
+.hero .next-open-call-time {
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.hero .next-open-call-date {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hero .next-open-call-reason {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.hero .next-open-call-button {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  justify-content: flex-start;
+  margin-top: 10px;
+  padding: 0 8px;
+  min-height: 32px;
+  border: 1px solid var(--text);
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1;
+  text-align: left;
+}
+
+.hero .next-open-call-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.hero .next-open-call-button:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+@media (max-width: 860px) {
+  .hero .next-open-call-card {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: min(220px, calc(100vw - 32px));
+    margin: 0 auto 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero .next-open-call-status-dot {
+    animation: none;
+  }
+
+  .hero .next-open-call-button {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero .next-open-call-card.is-open .next-open-call-status-dot,
+  .hero .next-open-call-card.is-closed .next-open-call-status-dot {
+    animation: next-open-status-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes next-open-status-pulse {
+  50% { opacity: 0.65; transform: scale(1.15); }
+}
+
+/* ============================================================
+   END NEXT OPEN CALL CARD
+   ============================================================ */
+
+.home-action-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--btn);
+  color: var(--on-btn);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.home-addition-section {
+  padding: clamp(2.5rem, 6vw, 4rem) 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.home-section-heading {
+  margin: 0 0 1.25rem;
+  color: var(--text);
+  font-size: clamp(1.6rem, 3.2vw, 2.2rem);
+  font-weight: 750;
+}
+
+.home-section-intro {
+  margin: -0.5rem 0 1.5rem;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.home-help-grid,
+.home-process-grid,
+.home-tools-grid {
+  display: grid;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-help-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.home-process-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.home-tools-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.home-content-card,
+.home-tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  min-height: 100%;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.home-content-card h3,
+.home-tool-card h3 {
+  margin: 0 0 0.65rem;
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.home-content-card p,
+.home-tool-card p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.home-content-card .home-action-button {
+  margin-top: auto;
+}
+
+.home-step-number {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.8rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--btn);
+  color: var(--on-btn);
+  font-weight: 750;
+}
+
+.home-tool-badge {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.8rem;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--btn);
+  color: var(--on-btn);
+  font-size: 1.05rem;
+  font-weight: 750;
+}
+
+.featured-work-marquee {
+  min-width: 0;
+}
+
+.featured-work-window {
+  overflow: hidden;
+  padding: 0.4rem 0;
+  mask-image: linear-gradient(to right, transparent, var(--text) 4%, var(--text) 96%, transparent);
+}
+
+.featured-work-window:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.featured-work-track {
+  display: flex;
+  width: max-content;
+  animation: featured-work-marquee 40s linear infinite;
+}
+
+.featured-work-marquee:hover .featured-work-track,
+.featured-work-marquee:focus-within .featured-work-track,
+.featured-work-marquee.is-paused .featured-work-track,
+.featured-work-marquee.is-dialog-open .featured-work-track {
+  animation-play-state: paused;
+}
+
+.featured-work-marquee.is-focus-reveal .featured-work-track {
+  animation: none;
+  transform: translateX(0);
+}
+
+.featured-work-half {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 1rem;
+  padding-right: 1rem;
+}
+
+.featured-work-card {
+  display: flex;
+  flex: 0 0 clamp(250px, 27vw, 320px);
+  flex-direction: column;
+  align-items: flex-start;
+  height: 350px;
+  padding: 0.85rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.featured-work-image-frame {
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.featured-work-image-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.featured-work-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.featured-work-placeholder[hidden] {
+  display: none;
+}
+
+.featured-work-card h3 {
+  width: 100%;
+  margin: 0.7rem 0 0.15rem;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.featured-work-client {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.featured-work-tools,
+.project-dialog-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.7rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.featured-work-tools li,
+.project-dialog-tools li {
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.74rem;
+  line-height: 1.4;
+}
+
+.featured-work-view {
+  margin-top: auto;
+  padding-top: 0.6rem;
+}
+
+.featured-work-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
+  min-height: 44px;
+  margin-top: 0.85rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.featured-work-dialog-backdrop {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  overflow-y: auto;
+  background: rgb(from var(--surface) r g b / 0.82);
+}
+
+.featured-work-dialog-backdrop[hidden] {
+  display: none;
+}
+
+.featured-work-dialog {
+  position: relative;
+  width: min(100%, 680px);
+  max-height: min(90vh, 900px);
+  padding: clamp(1rem, 3vw, 1.5rem);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgb(from var(--surface) r g b / 1);
+  color: var(--text);
+  box-shadow: 0 1.5rem 4rem var(--surface);
+}
+
+.featured-work-dialog h2 {
+  margin: 0 5rem 0.35rem 0;
+  color: var(--text);
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 750;
+}
+
+.featured-work-dialog-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  min-height: 44px;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--btn);
+  color: var(--on-btn);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.project-dialog-client {
+  margin: 0 0 0.85rem;
+  color: var(--muted);
+}
+
+.project-dialog-image {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.project-dialog-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-dialog-detail {
+  margin: 0 0 0.65rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.project-dialog-detail strong {
+  color: var(--text);
+}
+
+.project-dialog-tools {
+  margin-bottom: 1rem;
+}
+
+.home-action-button:hover,
+.featured-work-toggle:hover,
+.featured-work-dialog-close:hover {
+  border-color: var(--accent);
+  background: var(--btn);
+  color: var(--on-btn);
+  text-decoration: none;
+}
+
+.home-action-button:focus-visible,
+.featured-work-toggle:focus-visible,
+.featured-work-view:focus-visible,
+.featured-work-dialog-close:focus-visible,
+.featured-work-dialog:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@keyframes featured-work-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 1023px) {
+  .home-tools-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .home-help-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-process-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 519px) {
+  .home-help-grid,
+  .home-process-grid,
+  .home-tools-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .home-content-card,
+  .home-tool-card {
+    min-height: 0;
+  }
+
+  .featured-work-window {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    mask-image: none;
+    scrollbar-width: thin;
+  }
+
+  .featured-work-card {
+    flex-basis: 250px;
+  }
+
+  .featured-work-dialog-backdrop {
+    align-items: start;
+    padding: 0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .featured-work-track {
+    width: max-content;
+    animation: none;
+    transform: none;
+  }
+
+  .featured-work-window {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    mask-image: none;
+    scrollbar-width: thin;
+  }
+}

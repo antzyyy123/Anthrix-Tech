@@ -1,6 +1,9 @@
 (function () {
   "use strict";
 
+  var availability = window.AnthrixAvailability;
+  if (!availability) throw new Error("Booking availability helpers did not load.");
+
   var calendarGrid = document.getElementById("calendarGrid");
   var calendarHeading = document.getElementById("calendarHeading");
   var monthSummary = document.getElementById("monthSummary");
@@ -33,33 +36,11 @@
   var nextButton = document.getElementById("nextMonth");
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   var weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  var fixedHolidays = [
-    ["01-01", "New Year's Day"],
-    ["04-09", "Araw ng Kagitingan"],
-    ["05-01", "Labor Day"],
-    ["06-12", "Independence Day"],
-    ["08-21", "Ninoy Aquino Day"],
-    ["11-01", "All Saints' Day"],
-    ["11-30", "Bonifacio Day"],
-    ["12-08", "Feast of the Immaculate Conception"],
-    ["12-24", "Christmas Eve"],
-    ["12-25", "Christmas Day"],
-    ["12-30", "Rizal Day"],
-    ["12-31", "Last Day of the Year"],
-  ];
-  var slotDefinitions = [
-    { start: 9, label: "9:00 AM" },
-    { start: 10, label: "10:00 AM" },
-    { start: 11, label: "11:00 AM" },
-    { start: 13, label: "1:00 PM" },
-    { start: 14, label: "2:00 PM" },
-    { start: 15, label: "3:00 PM" },
-    { start: 16, label: "4:00 PM" },
-  ];
+  var slotDefinitions = availability.slotDefinitions;
   var holidayMaps = Object.create(null);
   var holidayLoads = Object.create(null);
   var holidayPromises = Object.create(null);
-  var currentManila = readManilaTime();
+  var currentManila = availability.readManilaTime();
   var visibleMonth = { year: currentManila.year, month: currentManila.month };
   var lastMonth = addMonths(visibleMonth, 6);
   var selectedDate = "";
@@ -162,83 +143,31 @@
   ];
   var guidePreviousFocus = null;
 
-  function readManilaTime() {
-    var parts = new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Manila",
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hourCycle: "h23",
-    }).formatToParts(new Date());
-    var value = {};
-    parts.forEach(function (part) {
-      if (part.type !== "literal") value[part.type] = Number(part.value);
-    });
-    return value;
-  }
+  var dateKey = availability.dateKey;
+  var parseDate = availability.parseDate;
+  var weekday = availability.weekday;
+  var formatDate = availability.formatDate;
+  var readManilaTime = availability.readManilaTime;
 
   function addMonths(value, amount) {
     var date = new Date(Date.UTC(value.year, value.month - 1 + amount, 1));
     return { year: date.getUTCFullYear(), month: date.getUTCMonth() + 1 };
   }
 
-  function dateKey(year, month, day) {
-    return String(year).padStart(4, "0") + "-" +
-      String(month).padStart(2, "0") + "-" + String(day).padStart(2, "0");
-  }
-
-  function parseDate(value) {
-    var match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value || "");
-    if (!match) return null;
-    var year = Number(match[1]);
-    var month = Number(match[2]);
-    var day = Number(match[3]);
-    var check = new Date(Date.UTC(year, month - 1, day));
-    if (check.getUTCFullYear() !== year || check.getUTCMonth() + 1 !== month || check.getUTCDate() !== day) return null;
-    return { year: year, month: month, day: day };
-  }
-
-  function weekday(value) {
-    var date = parseDate(value);
-    return date ? (new Date(Date.UTC(date.year, date.month - 1, date.day)).getUTCDay() + 6) % 7 : -1;
-  }
-
   function fixedHolidayMap(year) {
-    var holidays = Object.create(null);
-    fixedHolidays.forEach(function (holiday) {
-      holidays[year + "-" + holiday[0]] = holiday[1];
-    });
-    return holidays;
-  }
-
-  function formatDate(value, options) {
-    var date = parseDate(value);
-    if (!date) return "";
-    return new Intl.DateTimeFormat("en-PH", Object.assign({
-      timeZone: "UTC",
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    }, options || {})).format(new Date(Date.UTC(date.year, date.month - 1, date.day, 12)));
+    return availability.fixedHolidayMap(year);
   }
 
   function isPast(value) {
-    return value < dateKey(currentManila.year, currentManila.month, currentManila.day);
+    return availability.isPast(value, currentManila);
   }
 
   function holidayName(value) {
-    var date = parseDate(value);
-    if (!date) return "";
-    var map = holidayMaps[date.year] || fixedHolidayMap(date.year);
-    return map[value] || "";
+    return availability.holidayName(value, holidayMaps);
   }
 
   function canSelectDate(value) {
-    return weekday(value) >= 0 && weekday(value) < 5 && !isPast(value) && !holidayName(value);
+    return availability.canSelectDate(value, currentManila, holidayMaps);
   }
 
   function isWithinBookingRange(value) {
@@ -252,8 +181,7 @@
   }
 
   function isSlotPast(value, hour) {
-    if (value !== dateKey(currentManila.year, currentManila.month, currentManila.day)) return false;
-    return hour * 60 <= currentManila.hour * 60 + currentManila.minute;
+    return availability.isSlotPast(value, hour, currentManila);
   }
 
   function persistSelection() {
@@ -475,37 +403,10 @@
     if (holidayLoads[year] === "ready" || holidayLoads[year] === "failed") return Promise.resolve();
     if (holidayPromises[year]) return holidayPromises[year];
     holidayLoads[year] = "loading";
-    var request;
-    try {
-      request = fetch("https://date.nager.at/api/v3/PublicHolidays/" + year + "/PH");
-    } catch (error) {
-      holidayMaps[year] = fixedHolidayMap(year);
-      holidayLoads[year] = "failed";
-      renderNotice();
-      renderHolidayList();
-      renderMonthSummary();
-      return Promise.resolve();
-    }
-    holidayPromises[year] = Promise.resolve(request)
-      .then(function (response) {
-        if (!response.ok) throw new Error("Holiday service returned " + response.status);
-        return response.json();
-      })
-      .then(function (items) {
-        if (!Array.isArray(items)) throw new Error("Holiday service returned an unexpected response");
-        var holidays = Object.create(null);
-        items.forEach(function (item) {
-          if (!item || typeof item.date !== "string" || !parseDate(item.date)) return;
-          if (Number(item.date.slice(0, 4)) !== year) return;
-          if (typeof item.localName !== "string" && typeof item.name !== "string") return;
-          holidays[item.date] = item.localName || item.name;
-        });
-        holidayMaps[year] = holidays;
-        holidayLoads[year] = "ready";
-      })
-      .catch(function () {
-        holidayMaps[year] = fixedHolidayMap(year);
-        holidayLoads[year] = "failed";
+    holidayPromises[year] = availability.loadHolidays(year)
+      .then(function (result) {
+        holidayMaps[year] = result.map;
+        holidayLoads[year] = result.status;
       })
       .then(function () {
         if (selectedDate && (!canSelectDate(selectedDate) ||
