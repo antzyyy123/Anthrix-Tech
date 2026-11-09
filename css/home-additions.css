@@ -324,7 +324,7 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
 .featured-work-window {
   overflow: hidden;
   padding: 0.4rem 0;
-  mask-image: linear-gradient(to right, transparent, var(--text) 4%, var(--text) 96%, transparent);
+  mask-image: linear-gradient(to right, transparent, var(--text) 48px, var(--text) calc(100% - 48px), transparent);
 }
 
 .featured-work-window:focus-within {
@@ -340,7 +340,6 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
 
 .featured-work-marquee:hover .featured-work-track,
 .featured-work-marquee:focus-within .featured-work-track,
-.featured-work-marquee.is-paused .featured-work-track,
 .featured-work-marquee.is-dialog-open .featured-work-track {
   animation-play-state: paused;
 }
@@ -359,12 +358,13 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
 
 .featured-work-card {
   display: flex;
-  flex: 0 0 clamp(250px, 27vw, 320px);
+  flex: 0 0 320px;
+  min-width: 0;
   flex-direction: column;
   align-items: flex-start;
   height: 350px;
   padding: 0.85rem;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface);
@@ -405,7 +405,7 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
 
 .featured-work-card h3 {
   width: 100%;
-  margin: 0.7rem 0 0.15rem;
+  margin: 0.5rem 0 0;
   overflow: hidden;
   color: var(--text);
   font-size: 1rem;
@@ -416,7 +416,7 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
 
 .featured-work-client {
   width: 100%;
-  margin: 0;
+  margin: 0.25rem 0 0;
   overflow: hidden;
   color: var(--muted);
   font-size: 0.82rem;
@@ -434,8 +434,18 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
   list-style: none;
 }
 
+.featured-work-tools {
+  flex-wrap: nowrap;
+  width: 100%;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
 .featured-work-tools li,
 .project-dialog-tools li {
+  flex: 0 0 auto;
+  white-space: nowrap;
   padding: 0.2rem 0.5rem;
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -445,27 +455,13 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
   line-height: 1.4;
 }
 
-.featured-work-view {
-  margin-top: auto;
-  padding-top: 0.6rem;
+.featured-work-tools .featured-work-tools-more {
+  background: var(--btn);
+  color: var(--on-btn);
 }
 
-.featured-work-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 5.5rem;
-  min-height: 44px;
-  margin-top: 0.85rem;
-  padding: 0.45rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.85rem;
-  font-weight: 650;
-  cursor: pointer;
+.featured-work-view {
+  margin-top: auto;
 }
 
 .featured-work-dialog-backdrop {
@@ -558,7 +554,6 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
 }
 
 .home-action-button:hover,
-.featured-work-toggle:hover,
 .featured-work-dialog-close:hover {
   border-color: var(--accent);
   background: var(--btn);
@@ -567,7 +562,6 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
 }
 
 .home-action-button:focus-visible,
-.featured-work-toggle:focus-visible,
 .featured-work-view:focus-visible,
 .featured-work-dialog-close:focus-visible,
 .featured-work-dialog:focus-visible {
@@ -615,12 +609,7 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
   .featured-work-window {
     overflow-x: auto;
     overscroll-behavior-x: contain;
-    mask-image: none;
     scrollbar-width: thin;
-  }
-
-  .featured-work-card {
-    flex-basis: 250px;
   }
 
   .featured-work-dialog-backdrop {
@@ -639,7 +628,6 @@ html[data-theme="brand"] .hero .next-open-call-card.is-closed .next-open-call-st
   .featured-work-window {
     overflow-x: auto;
     overscroll-behavior-x: contain;
-    mask-image: none;
     scrollbar-width: thin;
   }
 }

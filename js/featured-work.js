@@ -4,35 +4,34 @@
   var projects = [
     {
       title: "Library management system",
-      image: "images/work/library-lms.png",
+      image: "images/work/LMS.png",
       alt: "Screenshot of the library management system",
       client: "Iloilo City Public Library (Dr. Graciano Lopez Jaena Learning Resource Center and Museum)",
       problem: "Library records and borrowing were handled manually.",
       built: "A web-based library management system for managing books, members and borrowing, with a public catalog.",
       result: "[Add real result]",
-      tools: ["Flask", "MySQL", "Flutter"],
+      tools: ["Flask", "MySQL", "HTML", "CSS", "JavaScript", "Bootstrap", "androidStudio", "node.js", "blender", "jinja2", "tailwindcss"],
     },
     {
       title: "Store management sheets",
-      image: "images/work/store-sheets.png",
+      image: "images/work/TindaHub.png",
       alt: "Screenshot of the store management sheets and dashboard",
       client: "A local sari-sari store",
       problem: "Sales, stock, expenses and customer credit were tracked by hand.",
       built: "Automated Google Sheets with a store dashboard covering sales, inventory, restock alerts, expenses, customer credit and payments.",
       result: "[Add real result]",
-      tools: ["Google Sheets", "Apps Script"],
+      tools: ["Google Sheets", "Apps Script", "HTML", "CSS", "JavaScript"],
     },
   ];
 
   var marquee = document.querySelector("[data-featured-marquee]");
   var viewport = document.querySelector("[data-featured-window]");
   var track = document.querySelector("[data-featured-track]");
-  var toggle = document.querySelector("[data-featured-toggle]");
   var backdrop = document.querySelector("[data-project-dialog-backdrop]");
   var dialog = document.querySelector("[data-project-dialog]");
   var dialogContent = document.querySelector("[data-project-dialog-content]");
   var closeButton = document.querySelector("[data-project-dialog-close]");
-  if (!marquee || !viewport || !track || !toggle || !backdrop || !dialog || !dialogContent || !closeButton) return;
+  if (!marquee || !viewport || !track || !backdrop || !dialog || !dialogContent || !closeButton) return;
 
   var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   var resizeTimer = 0;
@@ -66,6 +65,28 @@
     });
     frame.append(image, placeholder);
     image.src = project.image;
+  }
+
+  function fitToolTags(card, tools) {
+    var list = card.querySelector(".featured-work-tools");
+    if (!list) return;
+    var maxVisible = Math.min(3, tools.length);
+    for (var visibleCount = maxVisible; visibleCount >= 0; visibleCount -= 1) {
+      list.replaceChildren();
+      tools.slice(0, visibleCount).forEach(function (tool) {
+        list.appendChild(createElement("li", "", tool));
+      });
+      var hiddenCount = tools.length - visibleCount;
+      if (hiddenCount) list.appendChild(createElement("li", "featured-work-tools-more", "+" + hiddenCount));
+      if (list.scrollWidth <= list.clientWidth) break;
+    }
+  }
+
+  function fitToolTagsIn(half) {
+    half.querySelectorAll(".featured-work-card").forEach(function (card) {
+      var project = projects[Number(card.dataset.projectIndex)];
+      fitToolTags(card, project.tools);
+    });
   }
 
   function createCard(project, index, exposed) {
@@ -120,6 +141,7 @@
     track.replaceChildren();
     var firstHalf = createHalf(true);
     track.appendChild(firstHalf);
+    fitToolTagsIn(firstHalf);
     if (reducedMotion.matches) return;
 
     var halfWidth = firstHalf.getBoundingClientRect().width;
@@ -139,6 +161,8 @@
       });
     }
     track.appendChild(secondHalf);
+    fitToolTagsIn(firstHalf);
+    fitToolTagsIn(secondHalf);
   }
 
   function addDetail(parent, label, value) {
@@ -257,13 +281,6 @@
     }
   });
 
-  toggle.addEventListener("click", function () {
-    var paused = marquee.classList.toggle("is-paused");
-    toggle.textContent = paused ? "Play" : "Pause";
-    toggle.setAttribute("aria-label", paused ? "Play project marquee" : "Pause project marquee");
-    toggle.setAttribute("aria-pressed", String(paused));
-  });
-  toggle.setAttribute("aria-pressed", "false");
   marquee.addEventListener("focusin", function (event) {
     var card = event.target.closest && event.target.closest('.featured-work-card:not([aria-hidden="true"])');
     if (!card) return;
